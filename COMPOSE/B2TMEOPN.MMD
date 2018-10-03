@@ -1,0 +1,659 @@
+#transpose	-2
+#define		tempo		144
+#define		mastervol	50
+
+;-----------------------------------------------------------------------------
+; BOMBDITANK-II テーマ曲 "Elemental Secretagent" 
+; Composed / Arranged by (C) 1994 T.Kobayashi (GS/OPN)
+;-----------------------------------------------------------------------------
+;     作詞             岩崎 成昭(しゃう&メガド･ライヴ)
+;     作曲             小林 隆生(Interfair)
+; MIDI編曲/OPN(A)編曲  小林 隆生
+;-----------------------------------------------------------------------------
+
+;XMML3.00 Begin
+
+; マクロ読み込み(標準I/O 及び OPN/SSG音色設定コマンドマクロ他)
+#include	stdio.mac
+#include	ym2203.mac
+#include	lyric.mac
+
+; ヘッダー設定
+#title		Elemental Secretagent
+#composer	Takao Kobayashi(ABA)
+#arranger	Takao Kobayashi(ABA)
+#lyric		Shigeaki Iwasaki(IXA)
+#artist		Interfair Sound Team
+#copyright	Interfair/しゃう&メガド･ライブ/幻想☆楽師団 Ｆantasist
+
+;.object _main
+.object _b2theme_opn
+s       = *SOUND;
+lyric   = *COND;
+ccl     = *COND;
+melody  = OPN(0),BEEP(0);
+bass    = OPN(1);
+bass_b  = BEEP(0);
+drum    = OPN(2);
+drum2   = OPNA(0);
+melody2 = OPNA(1);
+b1      = SSG(0);
+b2      = SSG(1);
+b3      = SSG(2);
+{
+;	s		(SS);
+
+	s	@ecm[(SSG_DRVIDNUM),(SSG_DRVTYPE),0x00,w0,10,w40,w4600,0,
+			0x80];
+
+	s	@ecm[(SSG_DRVIDNUM),(SSG_DRVTYPE),0x00,w0,2,w40,w3000,0,
+			0,3,1,3,1,10,-1,2,-1,2,-1,2,0x80];
+
+	s	@ecm[(SSG_DRVIDNUM),(SSG_DRVTYPE),0x00,w0,3,w20,w3000,0,
+			0,3, 1,2, -1,4, -1,4, -1,6, -1,8,
+			0,3, 2,2, -1,4, -1,4, -1,6, -1,8,
+			0,3, 2,2, -1,4, -1,4, -1,6, -1,8,
+			0,3, 2,2, -1,4, -1,4, -1,6, -1,8,
+			0,3, 2,2, -1,4, -1,4, -1,6, -1,8,
+			0,3, 2,2, -1,4, -1,4, -1,6, -1,8,
+			0,3, 2,2, -1,4, -1,4, -1,6, -1,8, 0x80];
+
+	s	@ecm[(SSG_DRVIDNUM),(SSG_DRVTYPE),0x00,w0,4,w40,w4000,0,
+			0,1, 1,2, 1,1, 0,1, -1,4, -1,6, -1,8, -1,10, -1,15, -1,20, -1,24, 0x80];
+
+	s	@ecm[(SSG_DRVIDNUM),(SSG_DRVTYPE),0x00,w0,5,w35,w3000,0,
+			0,1, 1,1, 1,1, 0,2, -1,5, -1,8, -1,12, -1,15, 0x80];
+
+	s	@ecm[(SSG_DRVIDNUM),(SSG_DRVTYPE),0x00,w0,6,w35,w3000,0,
+			0,4, -1,5, -1,8, -1,12, -1,15, 0x80];
+
+	s	@ecm[(SSG_DRVIDNUM),(SSG_DRVTYPE),0x00,w0,7,w35,w3000,0,
+			0,2, -1,2, -1,2, -1,2, -1,2, 0x80];
+
+* Clarinet
+#define		clari	@100
+	s	(opnsound2(0,100,
+			58,40,3500,
+			17,	20,	31,	10,	14,	80,		0,	4,	0,	0,
+			12,	20,	31,	10,	11,	91,		0,	3,	0,	0,
+			10,	20,	31,	8,	14,	90,		0,	3,	0,	0,
+			12,	20,	31,	8,	14,	117,	0,	2,	0,	0));
+
+* Read synthesizer
+#define		synthe	@101
+	s	(opnsound2(0,101,
+			60,40,3500,
+			0,	24,	31,	11,	14,	97,		0,	3,	-1,	0,
+			7,	0,	31,	8,	15,	111,	0,	2,	-1,	0,
+			0,	24,	31,	11,	14,	115,	0,	1,	3,	0,
+			1,	0,	31,	8,	15,	111,	0,	2,	0,	0));
+
+* bass4
+#define		bass	@102
+;	s	(opnsound2(0,102,
+;			56,	20,	2500,
+;		,	0,	13,	31,	9,	13,	91,		0,	10,	-1,	0,
+;		,	0,	17,	27,	9,	13,	82,		0,	0,	-1,	0,
+;		,	0,	21,	27,	9,	13,	109,	1,	0,	-1,	0,
+;		,	0,	21,	28,	9,	13,	127,	1,	0,	-1,	0));
+
+	s	(opnsound2(0,102,
+			56,	20,	2500,
+			0,	10,	28,	11,	14,	91,		0,	10,	-1,	0,
+			0,	14,	24,	11,	14,	82,		0,	0,	-1,	0,
+			0,	17,	24,	11,	14,	105,	1,	0,	-1,	0,
+			0,	17,	25,	11,	14,	127,	1,	0,	-1,	0));
+
+* strings 弦楽器 (なんかあやしい)
+#define	strings2	@103
+	s	(opnsound2(0,103,
+			59,	20,	2500,
+			17,	25,	31,	12,	14,	90,		0,	2,	0,	0,
+			17,	20,	31,	11,	13,	100,	0,	3,	0,	0,
+			17,	25,	31,	12,	14,	90,		0,	3,	0,	0,
+			17,	20,	31,	11,	13,	100,	0,	2,	0,	0));
+
+;------------------------------------------------------------------------------
+;frequency modulation envelop for drums
+;------------------------------------------------------------------------------
+;bass drum ii (o3)
+#define		b	x127o3@0@e109c
+	s	(opnsound2(0,0,
+		60,0,0,
+			0,	9,	11,	0,	15,	80,		1,	14,	-1,	0,
+			0,	9,	11,	0,	15,	127,	0,	0,	1,	0,
+			0,	9,	11,	0,	15,	127,	1,	0,	-1,	0,
+			0,	9,	11,	0,	15,	127,	0,	0,	1,	0));
+;Snare Drum
+#define		s	x120o2@1@e110c
+	s	(opnsound2(0,1,
+			60,	0,	0,
+			0,	31,	31,	0,	15,	127,	0,	15,	0,	0,
+			0,	12,	17,	0,	12,	127,	0,	10,	0,	0,
+			0,	10,	31,	0,	4,	127,	0,	2,	-3,	0,
+			0,	14,	14,	0,	13,	127,	0,	0,	3,	0));
+;close high-hat (o3:s0,0,0,0)
+#define		h	x85o3@2c
+	s	(opnsound(0,	02,	44,	35,	3000,
+			31,	31,	0,	6,	0,	0,		0,	15,	7,	0,
+			31,	15,	17,	10,	3,	0,		1,	2,	7,	0,
+			31,	31,	0,	8,	2,	0,		0,	15,	0,	0,
+			31,	31,	19,	12,	5,	0,		0,	7,	0,	0));
+;tomtom 2 (o3:s255,1,16,0)
+#define		t	x100o4@3c
+	s	(opnsound(0,	03,	62,	25,	3000,	
+			31,	0,	0,	0,	0,	0,		1,	6,	0,	3,
+			31,	31,	15,	14,	0,	0,		2,	0,	0,	0,
+			31,	31,	4,	3,	0,	2,		3,	1,	3,	0,
+			31,	31,	3,	4,	0,	2,		2,	1,	7,	0));
+;Open Hi-Hat
+#define		o	x110o6@4c
+	s	(opnsound2(0,4,
+			52,0,0,
+			10,	21,	21,	12,	11,	121,	0,	15,	0,	0,
+			10,	12,	19,	9,	9,	120,	0,	7,	0,	0,
+			10,	21,	21,	12,	11,	121,	0,	15,	0,	0,
+			10,	12,	19,	9,	9,	120,	0,	7,	0,	0));
+; Ride-Cymbal
+#define		c	x90o7@5c
+	s	(opnsound2(0,5,
+			52,0,0,
+			0,	28,	23,	12,	12,	127,	0,	15,	0,	0,
+			0,	17,	25,	10,	9,	127,	0,	15,	0,	0,
+			0,	28,	23,	12,	12,	127,	0,	15,	0,	0,
+			0,	17,	25,	10,	9,	127,	0,	15,	0,	0));
+;
+;
+;------------------------------------------------------------------------------
+;lfo macro on/off for fm_tomtom
+;------------------------------------------------------------------------------
+;
+;#0 $f s0,0,0,0
+;#1 $f s255,1,16,0
+;
+;
+;------------------------------------------------------------------------------
+;music macro language part.
+;------------------------------------------------------------------------------
+;
+	melody	q80  @v110     l8 ;
+	melody2	q80  @v105     l8 ;
+	bass	q70  @v110 m0  l8 ;
+	bass_b	q70  @v110 m0  l8 ;
+	drum	q100 @v120 m70 l8 @e110 x103;
+	drum2	q100 @v117 m70 l8 @e85;
+	b1		q100 @v100 m20 l8 o5;
+	b2		q100 @v100 m20 l8 o5;
+	b3		q100 @v100 m20 l8 o5;
+	ccl		t120;
+
+	melody	(synthe)m110o5@e80 r1;
+	melody2	(synthe)m110o5@e65 r1 r16..;
+	bass	    (bass)  o4@e105 r1;
+	bass_b	_-12(bass)  o4@e105 r1;
+	drum	r1;
+	drum2	r1;
+	b1		@10 r1;
+	b2		@10 r1;
+	b3		@10 r1;
+	ccl		r1;
+
+	melody	>e1 d4.g4.d4;
+	melody2	>e1 d4.g4.d4;
+	bass	r1r1;
+	bass_b	r1r1;
+	drum	r1r1;
+	drum2	r1r1;
+	b1		c1 d1;
+	b2		e1 g1;
+	b3		g1 b1;
+	ccl		r1 r1;
+
+	melody	e4.f4.g+4 a4e4dc4.;
+	melody2	e4.f4.g+4 a4e4dc4.;
+	bass	<r1 r2a4g4;
+	bass_b	<r1 r2a4g4;
+	drum	r1 r2!c4!c4;
+	drum2	r1 r2!h!h!h!h;
+	b1		d1  c2.d4;
+	b2		g+1 e2.g4;
+	b3		b1	a2.b4;
+	ccl		r1 t+1r4 t+1r4 t+1r4 t+1r4;
+	
+	
+	melody	f1& f4.rfecd;
+	melody2	f1& f4.rfecd;
+	bass	f.f.f>f.<f.f f.f.f>f.<g.g>;
+	bass_b	f.f.f>f.<f.f f.f.f>f.<g.g>;
+	drum	[8 !b4];
+	drum2	[8 !h!h];
+	b1		f1f1;
+	b2		c1c1;
+	b3		a1a1;
+	ccl		t+1r4 t+1r4 t+1r4 t+1r4 t+1r4 t+1r4 t+1r4 t+1r4;
+
+	melody	c1 c4r4<a4b4;
+	melody2	c1 c4r4<a4b4;
+	bass	c.c.c>c.<c.c c.c.c<g>g<f+>f+;;
+	bass_b	c.c.c>c.<c.c c.c.c<g>g<f+>f+;;
+	drum	(SE)[4 !b4]  !s!h!h!s!b!s!b!s;
+	drum2	[8 !h!h];
+	b1		@5c1c1;
+	b2		@5e1e1;
+	b3		@5g1g1;
+	ccl		t+1r4 t+2r4 t+1r4 t+2r4 t+1r4 t+2r4 t+1r4 t+2r4;
+
+;
+	melody	[0 (synthe)m110o5@e80 ;
+	melody2	[0 (synthe)m110o5@e65 ;
+	bass	[0 (bass);
+	bass_b	[0 (bass);
+	drum	[0 ;
+	drum2	[0 ;
+	b1		[0 @5o5;
+	b2		[0 @5o5;
+	b3		[0 @5o5;
+
+	melody	q80  @v110     l8 ;
+	melody2	q80  @v105     l8 ;
+	bass	@v110 m0  l8 ;
+	bass_b	@v110 m0  l8 ;
+	drum	q100 @v120 m70 l8 @e110 x103;
+	drum2	q100 m70 l8 ;
+	b1		q100 @v100 m20 l8 ;
+	b2		q100 @v100 m20 l8 ;
+	b3		q100 @v100 m16 l8 ;
+
+; F ; F
+	melody	[4 >c<bga&a2& a1;
+	melody2	[4 >c<bga&a2& a1;
+	bass	[4 [2 <f>ff16<f>fff16<f>f];
+	bass_b	[4 [2 <f>ff16<f>fff16<f>f];
+	drum	[2 !b4!b4!b4!b4];
+	drum2	[2 [2!h//110!h//90!h//90!h//90]];
+	b1		[4 c4.c4.&c4 c4.c4.&c4;
+	b2		[4 a4.a4.&a4 a4.a4.&a4;
+	b3		[4 a1 &a1;
+
+; C D G7 | G7 FM7
+	melody	:>c<b>cd4/50<g/80g4& g2./90b4 ];
+	melody2	:>c<b>cd4/50<g/80g4& g2./90b4 ];
+	bass	:<c>cc16<c>ddd16<g>g <g>gg16<g>ggg16<g>f+ ];
+	bass_b	:<c>cc16<c>ddd16<g>g <g>gg16<g>ggg16<g>f+ ];
+	drum	!b4!b4!b4!b4 !b4!b4!b!s!s16!s16!b16!s16;
+	drum2	[4!h//110!h//90!h//90:!h//90]!c;
+	b1		:e4.f+4.d4&  d2.c+4];
+	b2		:g4.a4 .b4&  b2.a+4];
+	b3		:e4.f+4ag4& g1];
+
+	drum	[3 !b4!s4!b4!s4 !b4!s4!b16!s16!b!s4 : !b4!s4!b4!s4 !b4!s4!b!s!s!s];
+	drum2	[3 [4!h//110!h//90!h//90!h//90!h//110!h//90!h//110!h16//80!h16//90]];
+
+; C Dm7 Em7 | Em7 G
+	melody	>c<b>cd4/50<g/80>e4& e2.d4/40;
+	melody2	>c<b>cd4/50<g/80>e4& e2.d4/40;
+	drum	!s4!b!s4!b!s4 !b4!s4!b!s!b16!s16!b;
+	bass	<c>cc16<c>ddd16<e>e <e>ee16<e>egg16<g>f+;
+	bass_b	<c>cc16<c>ddd16<e>e <e>ee16<e>egg16<g>f+;
+	b1		e4.f4.g4&  g2.c4;
+	b2		g4.a4.b4&  b2.a4;
+	b3		c4.d4.e4&  e2.r4;
+
+;-----
+; F | G  F |
+	melody	c4.c{2/3cde} d2/80d4/50c4/50;
+	melody2	c4.c{2/3cde} d2/80d4/50c4/50;
+	bass	ff<f>ff<f16>f<f16>f gg<g>gf<f16>f<f16>f;
+	bass_b	ff<f>ff<f16>f<f16>f gg<g>gf<f16>f<f16>f;
+	drum	[7 !b4!s4!b4!s!b];
+	drum2	[7 !h//110!h//90!o//90!h//90!h//110!h//90!h//110!h//100];
+	b1		o4a.a.a2r b4.b4.a4;
+	b2		o5c.c.c2r d4.d4.c4;
+	b3		a4.a{2/3ab>c<} b2/80b4/50a4/50;
+
+; Em7 | Am7 |
+	melody	<b4.b{2/3bab} b4./80>c4.<b4;
+	melody2	<b4.b{2/3bab} b4./80>c4.<b4;
+	bass	ee<e>ee<e16>e<e16>e aa<a>aa<a16>g<g16>g;
+	bass_b	ee<e>ee<e16>e<e16>e aa<a>aa<a16>g<g16>g;
+	b1		g.g.g2r  >e4.e4.<g4;
+	b2		<b.b.b2r> c4.c4. d4;
+	b3		g4.g{2/3geg} <a>cea4.g4;
+
+; F | Fm 
+	melody	a2.b>c f4.e4.c4;
+	melody2	a2.b>c f4.e4.c4;
+	bass	ff<f>ff<f16>f<f16>f g+g+<g+>g+g+<g+16>g+<f16>f;
+	bass_b	ff<f>ff<f16>f<f16>f g+g+<g+>g+g+<g+16>g+<f16>f;
+	b1		a.a.a2r g+.g+.g+2r;
+	b2		c.c.c2r c. c. c2r;
+	b3		a4f4a4>c4 f4c4d4f4;
+
+; G7sus4 | G7
+	melody	d2.e4 d2/76c4/50d4/65;
+	melody2	d2.e4 d2/76c4/50d4/65;
+	bass	dd<d>dd<d16>d<e16>f gg<g>gg<g16>g<g16>g ;
+	bass_b	dd<d>dd<d16>d<e16>f gg<g>gg<g16>g<g16>g ;
+	drum	!b!s16//127!s16//120!s//110!b!s16//127!s16//120!s//110!b!s//127 ;
+	drum2	!h//110!h//90!o//90!h//90!h//110!h//90!o4//115;
+	b1		>c.c.c2r  o4 g4d4c<b4.;
+	b2		 d.d.d2r  o5 g4d4c<b4.;
+	b3		 g2.d8r   o6 g4d4c<b4.;
+
+;-----
+; C | G
+	melody	(SE)e1 d4.g4.d4;
+	melody2	(SE)e1 d4.g4.d4;
+	bass	[4<c>c] <[4<b>b];
+	bass_b	[4<c>c] <[4<b>b];
+	drum	[3 [4!b!h16!h16!s!h16!h16]];
+	drum2	[4 x90!c4!c4!c4!c4!c4!c4!c4:!c4]!o4;
+	b1		@7v13o5     l16<ceg>ceg>ceg<ec<gec<ge   @6l8 >dgb>d o4d16ddd16d;
+	b2		@7v13o5 r32.l16<ceg>ceg>ceg<ec<gec<gr64 @6l8  dgb>d o4g16ggg16g;
+	b3		@7v13o5 e4<g4>{2/3cde}                  @6l8 d4.g  o4b16bbb16b;
+
+; G#dim | Am
+	melody	e4.f4.e4 d4.c2r;
+	melody2	e4.f4.e4 d4.c2r;
+	bass	>[4<g+>g+]< [4<a>a];
+	bass_b	>[4<g+>g+]< [4<a>a];
+	b1		@7v13o5     l16<dg+b>dg+b>dg+b<g+d<bg+d<bg+  @6l8 >cea>c o4c16ccc16c;
+	b2		@7v13o5 r32.l16<dg+b>dg+b>dg+b<g+d<bg+d<br64 @6l8  cea>c o4e16eee16e;
+	b3		@7v13o5 e4<g+4>{2/3cde}                      @6l8 c4.a  o4a16aaa16a;
+
+; F   | Am7 |
+	melody	<a4b>c2r <g4b>c2r;
+	melody2	<a4b>c2r <g4b>c2r;
+	bass	>[4<f>f] [4<e>e];
+	bass_b	>[4<f>f] [4<e>e];
+	b1		@6o4v13f4.frf4//127f a4.ara4.//127;
+	b2		@6o4v13a4.ara4//127a c4.crc4.//127;
+	b3		@6o4v13c4.crc4//127c e4.ere4.//127;
+
+; Dm7 | G7sus4 G7
+	melody	<f4b>c4.d4 e.e.d2r;
+	melody2	<f4b>c4.d4 e.e.d2r;
+	bass	[4<d>d] <g>cdg4<g>g16<g.>;
+	bass_b	[4<d>d] <g>cdg4<g>g16<g.>;
+	drum	[2!b!h16!h16!s!h16!h16] !s4!b!s4!b!s!h16!h16;
+	b1		@6o4v13d4.drd4//127d  d.d. d v14d>@3d4.//127;
+	b2		@6o4v13f4.frf4//127f  g.g. g v14g>@3g4.//127;
+	b3		@6o4v13a4.ara4//127a >c.c.<b v14b @3b4.//127;
+
+;-----
+; C | G
+	melody	e1 d4.g4.d4;
+	melody2	e1 d4.g4.d4;
+	bass	[4<c>c16c16] [4<g>g16g16];
+	bass_b	[4<c>c16c16] [4<g>g16g16];
+	drum	[3 [4!b!h16!h16!s!h16!h16]];
+	drum2	[4 x90!c4!c4!c4!c4!c4!c4!c4:!c4]!o4;
+	b1		@7v13o5     l16<ceg>ceg>ceg<ec<gec<ge   @6l8 >dgb>d o4d16ddd16d;
+	b2		@7v13o5 r32.l16<ceg>ceg>ceg<ec<gec<gr64 @6l8 >>dgb>d o4g16ggg16g;
+	b3		@7v13o5 e4<g4>{2/3cde}                  @6l8 d4.g  o4b16bbb16b;
+	
+; E | Am
+	melody	e4.f4.g+4 a4e4dc4.;
+	melody2	e4.f4.g+4 a4e4dc4.;
+	bass	[4<g+>g+16g+16] [4<a>a16a16];
+	bass_b	[4<g+>g+16g+16] [4<a>a16a16];
+	b1		@7v13o5     l16<eg+b>eg+b>eg+b<g+e<bg+e<bg+  @6l8 >cea>c o4c16ccc16c;
+	b2		@7v13o5 r32.l16<eg+b>eg+b>eg+b<g+e<bg+e<br64 @6l8 >>cea>c o4e16eee16e;
+	b3		@7v13o5 e4<g+4>{2/3cde}                      @6l8 c4.a  o4a16aaa16a;
+; F   | Am7 |
+	melody	<a4b>c2r <g4b>c2r;
+	melody2	<a4b>c2r <g4b>c2r;
+	bass	[4<f>f16f16] <[4<a>a16a16];
+	bass_b	[4<f>f16f16] <[4<a>a16a16];
+	b1		@6o4v13f4.frf4//127f a4.ara4.//127;
+	b2		@6o4v13a4.ara4//127a c4.crc4.//127;
+	b3		@6o4v13c4.crc4//127c e4.ere4.//127;
+
+; Dm7 | G7sus4 G7
+	melody	<f4b>c4.d4 e.e.d4c<b>d16c16&;
+	melody2	<f4b>c4.d4 e.e.d4c<b>d16c16&;
+	bass	>[4<d>d16d16] [4<g>g16g16] ;
+	bass_b	>[4<d>d16d16] [4<g>g16g16] ;
+	drum	[2!b!h16!h16!s!h16!h16] !s4!b!s4!b!s!h16!h16;
+	b1		@6o4v13d4.drd4//127d  d.d. d v14d>@3d4.//127;
+	b2		@6o4v13f4.frf4//127f  g.g. g v14g>@3g4.//127;
+	b3		@6o4v13a4.ara4//127a >c.c.<b v14b @3b4.//127;
+
+;----
+;C
+	melody	c1&c1&;
+	melody2	c1&c1&;
+	bass	[2 cc<c>cc<c16>c<c16>c];
+	bass_b	[2 cc<c>cc<c16>c<c16>c];
+	drum	!b4!b4!b4!b4!b4!b4!b4!s4;
+	drum2	[2 [2!h//110!h//90!h//90!h//90]];
+	b1		@6o4v13c.c.c4.r4 c.c.c2r;
+	b2		@6o4v13e.e.e4.r4 f.f.e2r;
+	b3		@6o4v13g.g.g4.r4 g.g.g2r;
+
+	melody	c1r2<a4b4;
+	melody2	c1r2<a4b4;
+	bass	[2 cc<c>cc<c16>c<c16>c];
+	bass_b	[2 cc<c>cc<c16>c<c16>c];
+	drum	!b4!b4!b4!b4!b4!b4!b4!s4;
+	drum2	[2 [2!h//110!h//90!h//90!h//90]];
+	b1		c.c.c4.r4 c.c.c2r;
+	b2		e.e.e4.r4 f.f.e2r;
+	b3		g.g.g4.r4 g.g.g2r;
+
+;----
+;rep
+	melody	];
+	melody2	];
+	bass	];
+	bass_b	];
+	drum	];
+	drum2	];
+	b1		];
+	b2		];
+	b3		];
+
+;----
+;
+; ここから下が歌詞データですねー。
+;　　なんか、↓って音源ドライバの言語じゃないぞ。これ^^;;;
+;
+; MFXDRV/DDN XMML3.00言語では、こういうことができるのです(笑)
+; ふぉっふぉっふぉっふぉっふぉ。
+;
+#ifdef	__LYRIC_MAC__
+	lyric	r1;
+	lyric	r1 l8(clrscr)r1;
+	lyric	(color((TX_CYAN)|(TX_REVERSE)))(locate(0,0));
+	lyric	(puts("BOMBDITANK-II Theme Music 'Elemental Secretagent'"));
+
+	lyric	(locate(0,20))(color((TX_GREEN)))
+			(puts("Lyric Written  by"))r4;
+	lyric	(locate(18,20))(color((TX_WHITE)))
+			(puts("Shigeaki Iwasaki(IXA)"))r4;
+
+	lyric	(locate(0,21))(color((TX_GREEN)))
+			(puts("Music Composed by"))r4;
+	lyric	(locate(18,21))(color((TX_WHITE)))
+			(puts("Takao Kobayashi(ABA/IST)"))r4;
+
+	lyric	(locate(0,22))(color((TX_GREEN)))
+			(puts("Music Arranged by"))r4;
+	lyric	(locate(18,22))(color((TX_WHITE)))
+			(puts("Takao Kobayashi(ABA/IST) for GS&OPN(A)"))r4 r2;
+
+	lyric	r1 r1;
+	lyric	r1 r2;
+
+	lyric	(color((TX_GREEN)))(locate(6,1));
+	lyric	(puts("さあ"));
+	lyric	(color((TX_YELLOW)))(locate(6,1));
+	lyric	(puts("さ"))r4(puts("あ"))r4;
+	lyric	(color((TX_CYAN)))(locate(6,1));
+	lyric	(puts("さあ"));
+;---
+	lyric	(color((TX_GREEN)))(locate(6,2));
+	lyric	(puts("ふたたび　たびだつとき"));
+	lyric	(color((TX_YELLOW)))(locate(6,2));
+	lyric	(puts("ふ"))r(puts("た"))r(puts("た"))r(puts("び"))r2rr1;
+	lyric	(puts("　た"))r(puts("び"))r(puts("だ"))r(puts("つ"))r4
+			(puts("と"))r(puts("き"))r4r1;
+	lyric	(color((TX_CYAN)))(locate(6,2));
+	lyric	(puts("再び　旅立つとき　　　"));
+;---
+	lyric	(color((TX_GREEN)))(locate(6,3));
+	lyric	(puts("ちきゅうの　へいわのため"));
+	lyric	(color((TX_YELLOW)))(locate(6,3));
+	lyric	(puts("ち"))r(puts("きゅ"))r(puts("う"))r(puts("の"))r2rr1;
+	lyric	(puts("　へ"))r(puts("い"))r(puts("わ"))r(puts("の"))r4
+			(puts("た"))r(puts("め"))r4r1;
+	lyric	(color((TX_CYAN)))(locate(6,3));
+	lyric	(puts("地球の　平和のため　　　"));
+;---
+	lyric	(color((TX_GREEN)))(locate(6,4));
+	lyric	(puts("どんなに　こんなんでも"));
+	lyric	(color((TX_YELLOW)))(locate(6,4));
+	lyric	(puts("ど"))r(puts("ん"))r(puts("な"))r(puts("に"))r2rr1;
+	lyric	(puts("　こ"))r(puts("ん"))r(puts("な"))r(puts("ん"))r4
+			(puts("で"))r(puts("も"))r4r1;
+	lyric	(color((TX_CYAN)))(locate(6,4));
+	lyric	(puts("どんなに　困難でも　　"));
+;---
+	lyric	(color((TX_GREEN)))(locate(6,5));
+	lyric	(puts("みんなの　あすのために"));
+	lyric	(color((TX_YELLOW)))(locate(6,5));
+	lyric	(puts("み"))r(puts("ん"))r(puts("な"))r(puts("の"))r2rr1;
+	lyric	(puts("　あ"))r(puts("す"))r(puts("の"))r(puts("た"))r4
+			(puts("め"))r(puts("に"))r4r2;
+	lyric	(puts("　そ"))r(puts("う"))r(puts("さ"))r4;
+	lyric	(color((TX_CYAN)))(locate(6,5));
+	lyric	(puts("みんなの　未来のために　そうさ"));
+;---
+	lyric	(color((TX_GREEN)))(locate(6,7));
+	lyric	(puts("ボクのこころに　やどる　せいぎのちが"));
+	lyric	(color((TX_YELLOW)))(locate(6,7));
+	lyric	(puts("ボ"))r.(puts("ク"))r.(puts("の"))r;
+	lyric	(puts("こ"))r.(puts("こ"))r.(puts("ろ"))r;
+	lyric	(puts("に"))r2(puts("　や"))r4(puts("ど"))r4;
+	lyric	(puts("る"))r4.(puts("　せ"))r;
+	lyric	(puts("い"))r.(puts("ぎ"))r.(puts("の"))r;
+	lyric	(puts("ち"))r4.(puts("が"))r4.r4;
+	lyric	(color((TX_CYAN)))(locate(6,7));
+	lyric	(puts("ボクの心に　宿る正義の血が　　　　　　"));
+
+;---
+	lyric	(color((TX_GREEN)))(locate(6,8));
+	lyric	(puts("あくをたおせと　もえてる!!"));
+	lyric	(color((TX_YELLOW)))(locate(6,8));
+	lyric	(puts("あ"))r2.(puts("く"))r(puts("を"))r
+			(puts("た"))r4.(puts("お"))r4.(puts("せ"))r4
+			(puts("と"))r2.(puts("　も"))r(puts("え"))r
+			(puts("て"))r(puts("る!!"))rr4;
+
+	lyric	(color((TX_GREEN)))(locate(6,10));
+	lyric	(puts("たとえ"));
+
+	lyric	(color((TX_RED)|(TX_REVERSE)))(locate(22,8))
+			(puts("もえてる"))
+			(color((TX_YELLOW)))(locate(6,10))
+			(puts("た"))r;
+
+	lyric	(color((TX_MAGENTA)))(locate(22,8))
+			(puts("もえてる"))r;
+	lyric	(color((TX_RED)|(TX_REVERSE)))(locate(22,8))
+			(puts("もえてる"))
+			(color((TX_YELLOW)))(locate(8,10))
+			(puts("と"))r;
+
+	lyric	(color((TX_MAGENTA)))(locate(22,8))
+			(puts("もえてる"))r;
+	lyric	(color((TX_CYAN)))(locate(6,8));
+	lyric	(puts("悪を倒せと　燃えてる!!　　"));
+
+;---
+	lyric	(color((TX_GREEN)))(locate(14,10));
+	lyric	(puts("このみがほろびようとも"));
+	lyric	(color((TX_YELLOW)))(locate(10,10))
+			(puts("え"))r1;
+	lyric	(puts("　こ"))r4.(puts("の"))r4.(puts("み"))r4;
+	lyric	(puts("が"))r4.(puts("ほ"))r4(puts("ろ"))r(puts("び"))r4;
+	lyric	(puts("よ"))r(puts("う"))r(puts("と"))r(puts("も"))r2r;
+	lyric	(color((TX_CYAN)))(locate(6,10));
+	lyric	(puts("たとえ　この身が滅びようとも　"));
+
+;---
+	lyric	(color((TX_GREEN)))(locate(6,11));
+	lyric	(puts("ナイクスの　いんぼうを"));
+	lyric	(color((TX_YELLOW)))(locate(6,11));
+	lyric	(puts("ナ"))r(puts("イ"))r(puts("ク"))r(puts("ス"))r4
+			(puts("の"))r4.;
+	lyric	(puts("　い"))r(puts("ん"))r(puts("ぼ"))r(puts("う"))r4
+			(puts("を"))r4.;
+	lyric	(color((TX_CYAN)))(locate(6,11));
+	lyric	(puts("ナイクスの　陰謀を　　"));
+
+;---
+	lyric	(color((TX_GREEN)))(locate(6,12));
+	lyric	(puts("このてで　うちくだく！"));
+	lyric	(color((TX_YELLOW)))(locate(6,12));
+	lyric	(puts("こ"))r(puts("の"))r(puts("て"))r(puts("で"))r4.
+			(puts("　う"))r4;
+	lyric	(puts("ち"))r(puts("く"))r(puts("だ"))r(puts("く！"))r2r;
+	lyric	(color((TX_CYAN)))(locate(6,12));
+	lyric	(puts("この手で　打ち砕く！　"));
+
+;---
+	lyric	(color((TX_GREEN)))(locate(6,14));
+	lyric	(puts("よぞらに　かがやくそらに"));
+	lyric	(color((TX_YELLOW)))(locate(6,14));
+	lyric	(puts("よ"))r1(puts("ぞ"))r4.(puts("ら"))r4.(puts("に"))r4;
+	lyric	(puts("　か"))r4.(puts("が"))r4.(puts("や"))r4;
+	lyric	(puts("く"))r4(puts("そ"))r4(puts("ら"))r(puts("に"))r4.;
+	lyric	(color((TX_CYAN)))(locate(6,14));
+	lyric	(puts("夜空に　輝く宇宙に　　　"));
+
+;---
+	lyric	(color((TX_GREEN)))(locate(6,15));
+	lyric	(puts("きぼうを　もとめて"));
+	lyric	(color((TX_YELLOW)))(locate(6,15));
+	lyric	(puts("き"))r(puts("ぼ"))r(puts("う"))r(puts("を"))r2r;
+	lyric	(puts("　も"))r(puts("と"))r(puts("め"))r(puts("て"))r2r;
+	lyric	(color((TX_CYAN)))(locate(6,15));
+	lyric	(puts("希望を　求めて　　"));
+
+;---
+	lyric	(color((TX_GREEN)))(locate(6,16));
+	lyric	(puts("とびたて　Get My Dreams"));
+	lyric	(color((TX_GREEN)))(locate(6,17));
+	lyric	(puts("あしたへ……"));
+
+	lyric	(color((TX_YELLOW)))(locate(6,16));
+	lyric	(puts("と"))r(puts("び"))r(puts("た"))r(puts("て"))r4.
+			(puts("　Get"))r4;
+	lyric	(puts(" My"))r.(puts(" Drea"))r.(puts("ms"))r4;
+	lyric	(color((TX_YELLOW)))(locate(6,17));
+	lyric	(puts("あ"))r(puts("し"))r(puts("た"))r16(puts("へ……"))c16;
+
+	lyric	(color((TX_CYAN)))(locate(6,16));
+	lyric	(puts("飛び立て　Get My Dreams"));
+	lyric	(color((TX_CYAN)))(locate(6,17));
+	lyric	(puts("明日へ……　"));
+
+	lyric	r1r1r1r1;
+;---
+	lyric	(locate(40,7))
+			(color((TX_GREEN)))
+			(puts("Action Roleplaying Adventure game"))r4;
+	lyric	(locate(40,8))
+			(color((TX_CYAN)|(TX_REVERSE)))
+			(puts(" ＢＯＭＢＤＩＴＡＮＫ-II "))r4;
+	lyric	(locate(40,10))
+			(color((TX_CYAN)|(TX_UNDERLINE)))
+			(puts("好調開発中！！できたら遊んでね"))r4
+			(locate(40,11))
+			(puts("総容量2MB(予定:)現在1Mだだだ。"))r4;
+
+;---
+#endif
+}
+

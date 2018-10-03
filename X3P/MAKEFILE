@@ -1,0 +1,48 @@
+# 
+# x3p.EXE makefile
+#
+# copyright (c) 1993 by ABA / Interfair all rights reserved.
+# 
+# makefile copyright (c) 1993 by ABA  all rights reserved.
+#
+
+#
+# project files 
+#
+objs =	x3p.obj
+exec	= x3p
+prog	= b:					# programming drive
+tmp	= k:					# temporary   drive
+lib	= a:\turboc\lib
+junktest= b:\mfxddn\test
+#debugobj= $(lib)\c0t.obj
+#debuglib= $(lib)\cs.lib
+
+#
+# object and executable file be made.
+#
+.asm.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tasm /ml /m $<
+.c.obj:
+	@echo [43m -- Compiling : $&.c -- [m
+	tcc -mc -c $<
+
+$(exec).exe : $(tmp)$(exec).lib $(lib)\tls.lib $(lib)\mfxddn.lib
+	@echo [42m -- Making $(exec)... -- [m
+	tlink /3 $(lib)\c0c.obj , $(exec).exe ,,  $(tmp)$(exec) $(lib)\tls $(lib)\mfxddn $(lib)\cc 
+	@copy $(exec).exe $(junktest):
+	@echo [41m -- Complete -- [m
+#
+# library be made.
+#
+$(tmp)$(exec).lib : $(objs)
+	@echo [46m -- Making $(exec).lib public library -- [m
+	@del $(tmp)$(exec).lib
+	tlib $(tmp)$(exec).lib @x3pobj
+
+#
+# program object be made by.
+#
+x3p.obj		:	x3p.c
+

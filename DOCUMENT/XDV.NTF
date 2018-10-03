@@ -1,0 +1,464 @@
+.ll 76
+.so @orm.ntf
+.so @pri.ntf
+.book_style
+.mh /MFXDDN driver technical manual//ver.1.15DOC/
+.mf ''- % -'DIL1995'
+
+.\"docname
+mfxddn.doc
+.hl
+.\"tilte
+DOS汎用音源ドライバ
+.ce 3
+MFXDRV/DDN version 1.15
+XDVドライバ作成方法及び仕様についての
+テクニカルマニュアル
+.\"Copyright表示
+.ce
+copyright (c) 1993-95 by T.Kobayashi / Interfair(DIL)
+.ce
+All Rights Reserved.
+
+.hl
+.in 4
+
+.chapter はじめに
+
+.\"紹介文
+  この度は、Interfair製MFXDRV/DDNシステムテクニカルドキュメントを
+ダウンロード頂き誠にありがとうございましたm(__)m。
+
+　MFXDRV/DDN Kernel(以下DDN)は、音源やタイマなどを制御するとき組み込まれた
+ドライバを介して、目的の装置をアクセスします。本マニュアルは、
+各装置を実際にアクセスするドライバ(XDV)の作り方や、構造等を
+解説するﾂﾓﾘです(笑)。(ということで、一般ユーザには関係ないものかも:-)。
+
+.chapter xdvファイルのフォーマット
+　DDN専用のドライバプログラム(XDV)は、COM形式のファイルであり、
+先頭の固定ヘッダに、DRVIDや、実行アドレス等が格納されています。
+さて、以下の表のアドレスとは、COMファイルがメモリ配置される実際の
+オフセット番地であり、ファイルの先頭から100hということではありません
+(つまり 100H というのは、ファイルの先頭ってことです)。
+
+.{
+.in 0
+.\"--------
+.box 10 10 20 30
+address
+.boxnc
+size
+.boxnc
+abbreviation
+.boxnc
+explanation
+.boxnr
+100h
+.boxnc
+byte(4)
+.boxnc
+jmp near ...
+.boxnc
+.{
+comファイルとしてコマンドラインから実行したときに
+実行する、ジャンプ命令です。
+.}
+.boxnr
+104h
+.boxnc
+word
+.boxnc
+DRVTYPE
+.boxnc
+.{
+ドライバの種別を表します。
+　0000h...音源ドライバ
+　1000h...タイマドライバ
+　2000h...その他ドライバ
+.}
+.boxnr
+106h
+.boxnc
+asciiz(16)
+.boxnc
+DRVID
+.boxnc
+.{
+ドライバの名前を格納します。15byteで名前本体を記述し、16byte目に
+NULL(00h)を設定します。名前が15文字未満の場合、のこりの空き部分は
+SPACE(20h)で埋めます。
+.}
+.boxnr
+116h
+.boxnc
+word
+.boxnc
+DRVINIT
+.boxnc
+.{
+mld.exe等でドライバを読み込んだとき実行するプログラムのアドレスを格納
+するところです。プログラムは、far callで呼び出されるので、far ret で
+戻る必要があります。
+.}
+.boxnr
+118h
+.boxnc
+word
+.boxnc
+DRVEND
+.boxnc
+.{
+MFXDRV/DDN解放時に実行するプログラムのアドレスを格納するところです。
+プログラムの呼び出し方法は、DRVINITと同じです。
+.}
+.boxnr
+11ah
+.boxnc
+word
+.boxnc
+DRVPLAY
+.boxnc
+.{
+演奏開始時に実行するプログラムのアドレスを格納するところです。
+プログラムの呼び出し方法は、DRVINITと同じです。
+.}
+.boxnr
+11ch
+.boxnc
+word
+.boxnc
+DRVSTOP
+.boxnc
+.{
+演奏終了時に実行するプログラムのアドレスを格納するところです。
+プログラムの呼び出し方法は、DRVINITと同じです。
+.}
+.boxnr
+11eh
+.boxnc
+word
+.boxnc
+DRVINT
+.boxnc
+.{
+演奏中、1クロック毎に常に呼び出されるプログラムのアドレスを格納するところです。
+プログラムの呼び出し方法は、DRVINITと同じです。
+.}
+.boxnr
+120h
+.boxnc
+byte
+.boxnc
+DRVCH
+.boxnc
+使用可能チャンネル数
+.boxnr
+121h
+.boxnc
+byte
+.boxnc
+DRVUSECH
+.boxnc
+使用中チャンネル数
+.boxnr
+122h
+.boxnc
+byte
+.boxnc
+DRVVERINT
+.boxnc
+ドライバのVersionの整数部。Version 1.05 なら、10進の1を格納する。
+.boxnr
+123h
+.boxnc
+byte
+.boxnc
+DRVVERREAL
+.boxnc
+ドライバのVersionの小数点部。Version 1.45 なら、10進の45を格納する。
+.boxnr
+124h
+.boxnc
+word
+.boxnc
+DRVINSTMSG
+.boxnc
+.{
+mld.exe等によるドライバ組み込み時に、タイトルとして表示するメッセージの
+存在するアドレスを格納するところです。メッセージの最後は '$' で
+締めくくります。
+.}
+.boxnr
+126h
+.boxnc
+word
+.boxnc
+DRVUSEMSG
+.boxnc
+.{
+MFXDRV/DDN常駐時に、mfxddn.comを実行すると機能表示されますが、
+その機能表示のためのメッセージが存在するアドレスを、
+格納するところです。メッセージの最後は '$' で締めくくります。
+.}
+.boxnr
+128h～
+.boxnc
+word(?)
+.boxnc
+DRVFUNC
+.boxnc
+.{
+ドライバの各ファンクション実行先アドレスを格納するところです。
+音源ドライバ、タイマドライバ、及びその他ドライバでファンクションの
+内容が違います。ファンクションの列びは、音源ドライバはusl_drv.doc、
+タイマドライバはtim_drv.doc、その他ドライバはetc_drv.docに記載されている
+順序で書いていきます。
+.}
+.boxend
+.}
+
+.in 4
+.section 各ヘッダ情報の説明
+前述のヘッダ表の詳細な説明を行います。
+
+.subsection DRVTYPE(ドライバタイプ)
+　ドライバが、音源ドライバ、タイマドライバ、その他ドライバの、どの
+種類にあたるかを、ここで設定します。各ドライバの特徴について
+簡単に説明します。
+
+.item
+.{
+音源ドライバ(DRVTYPE=00xxh)
+　音源ドライバは、外部音源デバイス(たとえば MIDIやFM音源、BEEP音源)のみ
+を操作(発音開始、終了、音量制御、音色制御など)をするドライバです。
+.}
+.itemnr
+.{
+タイマドライバ(DRVTYPE=10xxh)
+　タイマドライバは、カーネルから与えられたテンポ及びタイムベース値
+を計算し、タイマI/Fを用いて定期的に割り込みを発生させ、カーネルに
+割り込みを供給するドライバです。
+.}
+.itemnr
+.{
+その他ドライバ(DRVTYPE=20xxh)
+　上の2種類のドライバ以外です。基本的に、機能を拡張する
+(たとえば、歌詞を表示したり、レベルメータや、早送り機能を付加する)
+ドライバです。変な物としては、ちゃだんすを曲にあわせて強引に
+踊らせるドライバ(笑)とかもあります。
+.}
+.itemend
+　上の'DRVTYPE='で示された数値を代入します。xxの部分は
+どんな数値でも構いません。21xxh以降は将来的なreserveのため、
+使用しないで下さい。
+
+.subsection DRVID(ドライバID)
+　ドライバの名前を指定するものです。ASCIIZ形式の固定長(15文字+NULL)
+で記述します。ドライバIDが15文字未満の場合、残りをスペースで埋めて
+15文字にし、最後にNULLを加えて16バイトにします。使用できる文字は
+特に指定しませんが、半角カナ文字や、漢字(Shift-JIS/JIS/EUCなど)は
+コードに注意して書きましょう。NULL以外の文字で不都合がなければ、
+なんでも使用可能とします。
+
+.subsection DRVINIT(mld.exe呼び出し時初期化プログラム格納アドレス)
+　mld.exe等で組み込み時に、
+MFXDRV/DDNは、このDRVINITのアドレスに
+far callします。DRVINITで記述されたアドレス先のプログラムの内容は、
+制御したい装置が正常か、あるいは使用可能か調査し、その情報を返すように
+します。
+また、同時に、内部データバッファの初期化、必要ファイルの読み込みなど
+、演奏、及び動作に必要な作業を行って下さい。
+具体的な情報の返し方は、音源ドライバの場合、音源が使用可能ならば、
+使用可能なチャンネル数(1～n)を、使用不可ならば0をaxに入れて
+far retしてください。また、タイマ及びその他ドライバの場合、使用可能なら
+0以外の数、使用不可ならば0をaxに入れてfar retして下さい。
+
+.subsection DRVEND(mfxddn.com解放時実行プログラム格納アドレス)
+　mfxddn /r で解放時に、MFXDRV/DDNは、このDRVENDのアドレスに
+far callします。DRVENDで記述されたアドレス先のプログラムは、
+音源、タイマ他の使用終了処理などです。
+ドライバが使用しているメモリは、バッファチェインブロック(後述)に
+登録してない場合、解放する必要がありますが、ドライバ自体が存在するメモリは、
+このプログラム実行後、自動的に解放されます。
+処理終了後、far retを行って下さい。
+
+.subsection DRVPLAY(演奏開始前実行プログラム格納アドレス)
+　演奏を開始する直前に呼び出されます。音源などの初期化を行って
+ret farを行って下さい。DOS Func.callも使用できます。
+
+.subsection DRVSTOP(演奏終了後実行プログラム格納アドレス)
+　演奏終了後に呼び出されます。音源などの音の消去などの処理をし、far ret を
+行って下さい。DOS Func.callも使用できます。
+
+.subsection DRVINT(演奏中割り込みプログラム格納アドレス)
+　演奏中、一定間隔で呼び出されます。割り込み時間は、タイムベースをB[Clock]、
+テンポをT[BPM]とすると、割り込み周期IT[s]は、
+.quote
+IT=60/(T*B)
+.quoteend
+となります。このプログラムの内容は、できるだけ軽い処理を行って下さい。
+重い処理を行うと、演奏もたりなどの影響があります。opn.xdvやssg.xdvは、
+ソフトウェアエンベロープの音量増減処理、及びビブラート処理などを
+行っています。←テンポに依存しますが^^;
+　処理終了後は、直ちにfar retしてください。なお、このプログラム内では、
+DOS Func.callは使用できません。
+
+.subsection DRVCH、DRVUSECH(ドライバ使用チャンネル数)
+　ここは、何も定義しないで構いません。MFXDRV/DDNが、自動的に書き込みます。
+
+.subsection DRVVERINT(ドライババージョン番号(整数部))
+　ドライバのバージョン番号x.yyの整数部を設定して下さい。
+たとえば、バージョンが 4.51 なら、4 を定義します。
+
+.subsection DRVVERREAL(ドライババージョン番号(小数点部))
+　ドライバのバージョン番号x.yyの小数点部を設定して下さい。
+たとえば、バージョンが 4.51 なら、51 を定義します。
+
+.subsection DRVINSTMSG(ドライバ組み込み時表示メッセージ格納アドレス)
+　mld.exeで、ドライバ組み込み時に表示するタイトル文字列が存在する
+アドレスを設定するところです。表示したいメッセージの最後には、
+'$'を置いて下さい。
+
+.subsection DRVUSEMSG(ドライバ機能表示メッセージ格納アドレス)
+　mfxddn常駐時に、mfxddn.comを実行すると、現在使用可能な
+ドライバの機能が表示されます。表示したいメッセージが
+存在するアドレスを設定するところです。表示したいメッセージの最後には、
+'$'を置いて下さい。
+
+.subsection DRVFUNC(機能別呼び出しアドレス)
+　以下、音源ドライバ、タイマドライバ、その他ドライバにそれぞれ
+割り当てている機能を行うプログラムのアドレスを示します。
+MFXDRV/DDNは音源制御のため、DRVFUNCに記述されたアドレスに
+far callします。このアドレス先のプログラム内ではSS,SP以外のレジスタはすべて
+破壊しても構いません。プログラム終了後は far ret で帰るようにしてください。
+
+それぞれのドライバに関するDRVFUNCの列びは、
+音源ドライバは usl_drv.doc、タイマドライバは tim_drv.doc、
+その他ドライバは etc_drv.doc に記載されています。
+
+.section ECMについて
+  DRVFUNC(機能別呼び出しアドレス)の AH=00h は、音源、タイマ及び
+その他ドライバは、ECMとして使用します。ECMとは、
+Extended Control Message の頭文字をとったもので、音色定義や、
+DRVFUNCで定義されていない機能を付加するために用意した機能です。
+MIDIでは、このメッセージに対応するものとして Exclusive Messageがあります。
+
+  音源、タイマ及びその他ドライバは、その識別子として、
+DRVIDを用いています。ECMでは、このDRVIDを一切用いずに、DRVIDNUMという
+16bit幅の数値と、ドライバタイプの8bit幅の数値を用います。
+このように、DRVIDを使用しないことにより、DRVIDを一時的に変更しても、
+音色定義などドライバに依存するメッセージ群は正常に受け取ることができるように
+なっています。また、DRVIDNUMは固定番号で、ユーザが勝手に変更できないので、
+ドライバ依存のコードを作成することが出来ます。
+
+　es:bx にECMID とメッセージの存在するアドレスが入り、
+ECMプログラム(DRVFUNC AH=00H)が呼び出されます。ユーザまたは曲データ
+からECMが指示されると、MFXDRV/DDNは、登録されているすべてのドライバに、同じ
+ECMを送ります。すなわち、もし16個のドライバが組み込まれていた場合、
+それぞれのドライバに対して同じECMで、16回呼び出されることになります。
+
+  ECMに付加される、ECMIDは次のような形式で構成されます。
+.quote
+.{
+DRVIDNUM(word) DRVTYPE(byte) LENGTH(word) MESSAGE(LENGTH bytes)....
+.}
+.quoteend
+
+.{
+.in 0
+.box 10 10 20 30
+address
+.boxnc
+size
+.boxnc
+abbreviation
+.boxnc
+explanation
+.boxnr
+es:bx
+.boxnc
+word
+.boxnc
+DRVIDNUM
+.boxnc
+.{
+DRVIDNUMです。他のドライバと重ならない任意の数値で
+構いません。
+.}
+.boxnr
+es:bx+2
+.boxnc
+byte
+.boxnc
+DRVTYPE
+.boxnc
+.{
+音源ドライバは00xxxxxxB,タイマドライバは01xxxxxxB,その他ドライバは
+10xxxxxxB,その他は11xxxxxxBです(x:任意)。
+.}
+.boxnr
+es:bx+3
+.boxnc
+word
+.boxnc
+MESSAGE Length
+.boxnc
+メッセージの長さです。ECMIDの長さ5byteは含まれません。
+.boxnr
+es:bx+5
+.boxnc
+byte(?)
+.boxnc
+Message
+.boxnc
+ECMメッセージの本体です。63Kbyteまで記述可能です。
+.boxend
+.}
+.in 4
+
+ここで、注意しなければならないことは、wordデータに関しては、
+HとLが反転しているということです。
+
+DRVIDNUM=1244H DRVTYPE=30H LENGTH=4H MESSAGE=02,03,05,09H は、
+区切って記述すると、
+.quote
+1244-30-0004-02-03-05-09
+.quoteend
+ですが、binary viewerなどで覗くと、HとLが反転しているので、
+.quote
+44-12-30-04-00-02-03-05-09
+.quoteend
+となります。ECMについての説明では、前者か後者かどっちの記述かを
+はっきりさせて説明するようにして下さい。
+
+ECMを受け取るドライバは、以下の手順を踏んで処理してください。
+.item
+kernelから es:bx にECMのアドレスが入り、DRVFUNC AH=00h が呼び出されます。
+.itemnr
+.{
+ドライバは es:bx のECMアドレスに格納されたECMデータを参照し、
+DRVIDNUM及びDRVTYPEが自分に対するのもであるか判別し、
+自分に対する物でないなら、far ret します。
+.}
+.itemnr
+ドライバは、MESSAGEの内容を参照し、処理を行います。
+.itemend
+
+opn.xdvやssg.xdvなどでは、MESSAGEの先頭に機能コードが格納
+されており、番号=00h が音色定義になっています。たとえば、
+opn.xdvにおける音色定義のECMは、次のようになっています。
+.quote
+0008-00-0026(長さ)-00(音色定義)-????(ﾊﾞﾝｸ)-??(音色no)-(以下データ)
+.quoteend
+このECMの形式(DRVIDNUM-DRVTYPE-LENGTH-00-BANK-NO-DATA...)は、
+lis形式の音色ライブラリファイルでも使用しますので、
+音色定義についてはこのフォーマットに準じるようにしてください。
+
+音色定義は、一般的に演奏の最初に行います。そこで、MFXDRV/DDNシステムでは
+初期化用に *SOUND というトラック属性をもっています。この属性を持つ
+トラックは、他の演奏(*COND や、OPN(0) など)より 1clock だけ早く
+ECMを処理することが出来ます。また、このときのみ、DOS Func.call
+が使用できる(それ以降は暴走します^^;;)ので、たとえばPCMデータをファイルから
+読み込んで、登録することが可能となります。
+
+

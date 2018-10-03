@@ -1,0 +1,14 @@
+;
+; ed.mud OPL2 initialize script by T.K.
+;
+#include	ym3812.mac
+#timebase	384
+
+.object _sb_init
+INIT 	= *SOUND;
+DRUMS	= OPL2(0);
+{
+	INIT	(y3812(0xbd,0x80));
+	INIT	(y3812(0xbd,0x40));
+}
+

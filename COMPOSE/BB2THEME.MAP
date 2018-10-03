@@ -1,0 +1,13 @@
+-- mcv.exe version 1.21c MIDI mapfile of 'bb2theme.mid' --
+
+Track( 0) : Conductor    ; "Conductor"
+Track( 1) : MIDI ch.( 0) ; "Melody"
+Track( 2) : MIDI ch.( 1) ; "Chord"
+Track( 3) : MIDI ch.( 2) ; "Bass"
+Track( 4) : MIDI ch.( 3) ; "Strings"
+Track( 5) : MIDI ch.( 4) ; "Cl.Guitor"
+Track( 6) : MIDI ch.( 5) ; "Clest."
+Track( 7) : MIDI ch.( 6) ; "Brass"
+Track( 8) : MIDI ch.( 7) ; "Obliguard(Piano)"
+Track( 9) : Conductor    ; "Harpsichord"
+Track(10) : MIDI ch.( 9) ; "Rithm"

@@ -1,0 +1,162 @@
+.\".ll 76
+.\".so @orm.ntf
+.\".so @pri.ntf
+.\".book_style
+.\".mh /mPlus(mfxc+) user's manual/mplus.exe使い方/ver.1.00DOC/
+.\".mf ''- % -'DIL1994'
+.bp
+.chapter 実際の使用方法
+
+.in 4
+○mplus.exeの使い方
+.in 8
+　ここでは実際のcompileについて説明します。
+　まず、MMLファイルの拡張子は～.mmdに統一してください。たとえば
+inner.mmdというファイルを作成してコンパイルしたい場合、次のように
+操作します。
+.refer
+.{
+.nf
+mplus inner
+.}
+.referend
+
+正常にコンパイルが行われた場合は、
+.in 4
+.refer
+.{
+.nf
+music driver MFXDDN XMML3.00 compiler mPlus(mfxc+) version 1.00 
+copyright (c) 1991-94 by ABA / T.Kobayashi and Interfair All Rights Reserved.
+inner.mmd:
+        obj(0):_main      in inner.mmd
+        Fatal Error Messages: 0
+        Warning     Messages: 0
+
+        Available memory  :  422656bytes.
+.}
+.referend
+.in 8
+
+　と表示されます。obj(?):.... in .... という表示は、"シリアル番号0にinner.mmd
+に記述されている_mainというオブジェクトを登録中です"という意味にとって
+下さい。もちろん登録中に文法ミスなどが発生した場合、エラーが表示されます。
+　Fatal Error Messages というのはコンパイル続行不能な致命的エラー、
+Warning Messages というのはコンパイルは続行可能だが、これでいいのか?という
+警告の事を示し、それぞれエラーが出現した数を表示しています。
+　実際にエラーが出た場合のメッセージの見方について説明します。
+たとえば、あるトラックに\というコマンド(このコマンドは存在しない)が使用
+されていたとします。するとコンパイル中には次のようなメッセージが
+表示されます。
+
+.in 4
+.refer
+.{
+.nf
+music driver MFXDDN XMML3.00 compiler mPlus(mfxc+) version 1.00 
+copyright (c) 1991-94 by ABA / T.Kobayashi and Interfair All Rights Reserved.
+inner.mmd:
+        obj(0):_main      in fight.mmd
+Error:inner.mmd(L00004) '\'は解釈不可能なMMLコマンドです。
+        Fatal Error Messages: 1
+        Warning     Messages: 0
+
+        Available memory  :  407440bytes.
+.}
+.referend
+.in 8
+　まず、Error:というのはFatal Errorのことを示します。Errorにはいくつかの
+タイプがあり、コンパイル処理などに次のような影響を及ぼします。
+.box 20 20 20
+メッセージ
+.boxnc
+種類
+.boxnc
+対処方法
+.boxnr
+Error
+.boxnc
+致命的エラー
+.boxnc
+.{
+コンパイルは続行するが、オブジェクトを吐き出さない。
+また、mplusは、0以外のリターンコードを返す。
+.}
+.boxnr
+Warning
+.boxnc
+警告
+.boxnc
+とりあえず値を補正し、コンパイルを続行。
+.boxnr
+System Error
+.boxnc
+致命的システムエラー
+.boxnc
+その時点でコンパイルを強制中断。
+.boxnr
+System Warning
+.boxnc
+システム警告
+.boxnc
+そのままコンパイルは続行
+.boxend
+
+　次にファイル名とエラーが発生した行数を表示します。
+ここでは、inner.mmd(L00004)という表示なので、inner.mmdの4行目でエラー
+が発生したぞ、という意味です。
+　最後はエラーメッセージです。もし、その行にエラーがどうしても
+見つからない場合、文の前後関係からエラーが発生することがありますので注意して
+ください。
+
+　致命的エラーが無く特にオプション指定が無い場合、ml.exe(オブジェクトリンカ)
+を呼び出して、直接～.mudファイル(演奏可能ファイル)を作成します。
+ml.exeがpathの通ったディレクトリに存在しない場合、warningメッセージが表示されて
+リンクされませんので、注意して下さい。ml.exeはpathの通ったディレクトリに
+格納しておくのがいいでしょう。
+
+.in 4
+○mplus.exeオプション
+.in 8
+　mplus.exeでは以下のオプションが使用可能です。
+.quote
+.{
+.nf
+-c       コンパイルのみを行う
+-l(?)    リンカ(ml.exe)に、オプション -(?) を渡す。
+*.mbj    一緒にlinkする。
+-i(?)    #include 命令で参照されるディレクトリを指定する。
+-d,-x    デバッグモード
+.}
+.quoteend
+
+　-c オプションを指定すると、カレントディレクトリに～.mbs,～.mbjファイルを
+作成します。
+　-l オプションを利用すると、ml.exeの制御もできるようになります。たとえば
+ml.exeの～.mudファイル最適化オプション -o を使用するときは -lo と指定
+することにより、利用することが出来ます。
+　*.mbj は、ml.exeを呼び出したときに、これらを一緒に引き渡して
+リンクすることができます。
+　-i オプションは、#include で読み込みたいファイルが存在するディレクトリ
+を指定します。TCCのように ; で区切っていくつも羅列することはできません(;;)。
+いずれ対応したいですね。(例)-ia:\mplus\include このとき #include abc.mac と
+すると、最初に a:\mplus\include\abc.mac を探して、なかった場合カレントディ
+レクトリを探します。
+
+　なお、上記のオプションは、mplus.cfg に記述しておくことができます。
+.br
+例:mplus.cfgの内容
+.refer
+.{
+-ia:\mplus\include
+.br
+-lo
+.br
+-lu
+.br
+.}
+.referend
+　includeディレクトリを a:\mplus\include にし、リンカに最適化オプションと、
+音色自動リンク機能を引き離すことを設定します。
+
+

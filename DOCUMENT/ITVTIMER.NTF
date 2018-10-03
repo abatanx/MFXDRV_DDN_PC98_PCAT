@@ -1,0 +1,80 @@
+.ll 76
+.so @orm.ntf
+.so @pri.ntf
+.\"docname
+.mh /MFXDDN user's manual/itvtimer.xdv/ver.1.00DOC/
+.mf ''- % -'DIL1994'
+
+itvtimer.doc
+.hl
+.\"tilte
+MFXDRV/DDN専用PC98タイマドライバ
+.ce
+itvtimer.xdv version 1.00
+.\"Copyright表示
+.ce
+copyright (c) 1993,94 by T.Kobayashi / Interfair(DIL)
+.ce
+All Rights Reserved.
+
+.hl
+
+※はじめに
+
+.in 4
+○これ
+.in 8
+.\"紹介文
+　MFXDRV/DDN専用のタイマドライバです。PC-9801/9821及びそれらの互換機
+などで動作します。なお、割り込みにインターバルタイマを使用しています。
+また、インターバルタイマを使用しているため、これを用いるAPやTSRとは
+相性が悪い場合があります。
+　また、MFXDRV/DDNは、複数のタイマドライバが組み込まれている場合、
+一番最初に組み込んだドライバを使用するようになっていますので
+２つ以上組み込むのは無意味です^^。ただし、タイマドライバはかならず１つは
+組み込んで下さいね。よろしくおねがいします。
+　ローカルスタックを 0.5Kほど用意しています。スタック使用量が
+多い日もあ・ん・し・ん(バキ)。
+
+.in 4
+○動作機種
+.in 8
+.\"動作機種名
+　PC-9801/9821及びそれらの互換機上で動作します。8086を積んだ
+マシンでは動作しません(186命令を使用)。
+
+.in 0
+※つかいかた
+
+.in 4
+○組み込み方法
+.in 8
+　MFXDRV/DDNが常駐している状態で、mld.exe を使用して組み込みます。
+
+　常駐は
+.refer
+.{
+.nf
+mfxddn
+mld itvtimer
+.}
+.referend
+
+　なお、解放はMFXDRV/DDNの解除時に同時に解放されます。
+
+.in 4
+○スペック及び機能など
+.in 8
+　別途の itvtimer.spc をご覧下さい。読み方は、MFXDRV/DDN付属の
+マニュアルを参照下さい。
+
+.in 0
+※著作権とか。
+
+.so cpright.ntf
+
+.in 0
+.hl
+.\"docname
+itvtimer.doc
+

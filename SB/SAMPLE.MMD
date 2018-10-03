@@ -1,0 +1,25 @@
+#include	ym3812.mac
+.object _main
+S=*SOUND;
+Melody1=OPL2(0);
+Melody2=OPL2(1);
+{
+	S	(opl2soundss(0,0,0,0,
+			0,0,
+			2,9,
+			15,13,
+			5,5,
+			0,1,
+			3,6,
+			13,14,
+			23,63,
+			1,0,
+			1,0,
+			0,1,
+			0,1,
+			2,0));
+
+	Melody1	@0@v127@e127cdefgab>c4;
+	Melody2	@0@v127@e127p-10cdefgab>c4;
+}
+

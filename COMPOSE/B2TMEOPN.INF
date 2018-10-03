@@ -1,0 +1,49 @@
+;--- Information Header "j:b2tmeopn.mbj" ---
+title      = ""
+artist     = ""
+lyric      = ""
+composer   = ""
+arranger   = ""
+copyright  = ""
+
+;--- Track Informations ---
+;track?    = _ｵﾌﾞｼﾞｪｸﾄ名(ﾄﾗｯｸ番号)        : 外部ｵﾌﾞｼﾞｪｸﾄ参照
+;track?    = 音源(ﾁｬﾝﾈﾙ),音源(ﾁｬﾝﾈﾙ), ... : 拡張音源割り当て
+;記述がない場合は、音源はMIDI、チャンネルは自動判別で行います。
+
+track0     = 
+track1     = 
+track2     = 
+track3     = 
+track4     = 
+track5     = 
+track6     = 
+track7     = 
+track8     = 
+track9     = 
+track10    = 
+track11    = 
+track12    = 
+track13    = 
+track14    = 
+track15    = 
+track16    = 
+track17    = 
+track18    = 
+track19    = 
+track20    = 
+track21    = 
+track22    = 
+track23    = 
+track24    = 
+track25    = 
+track26    = 
+track27    = 
+track28    = 
+track29    = 
+track30    = 
+track31    = 
+
+;--- Memo ---
+memo
+

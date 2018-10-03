@@ -1,0 +1,65 @@
+# 
+# opn.xdv makefile		DDNêÍóp OPNÉhÉâÉCÉoÅ[ opn.xdv
+#
+# copyright (c) 1994 by ABA / Interfair all rights reserved.
+# 
+# makefile copyright (c) 1994 by ABA  all rights reserved.
+#
+!include	"..\sysdir.inc"
+
+#
+# project files 
+#
+objs =	opnaterm.obj	opnainit.obj	opnafunc.obj	opnasnd.obj	\
+	opnavol.obj
+exec	= opna
+base	= opna
+
+#
+# object and executable file be made.
+#
+.asm.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tasm /ml $<
+.c.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tcc -mc -c $<
+
+$(exec).xdv : $(base).obj $(tmp)$(exec).lib
+	@echo [42m -- Making $(exec)... -- [m
+	tlink /t /x $(base).obj ,$(exec).xdv ,,$(tmp)$(exec)
+	@copy $(exec).xdv $(junktest):
+	@echo [41m -- Complete -- [m
+#
+# library be made.
+#
+$(tmp)$(exec).lib : $(objs)
+	@echo [46m -- Making $(exec).lib public library -- [m
+	@del $(tmp)$(exec).lib
+	tlib $(tmp)$(exec).lib @object
+
+#
+# program object be made by.
+#
+opna.obj	:	opna.asm	..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					opna.inc
+opnaterm.obj	:	opnaterm.asm	..\kernel\stdio.inc \
+			opnafltr.inc	..\kernel\ddn.inc   \
+					opna.inc
+opnainit.obj	:	opnainit.asm	..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					opna.inc
+opnafunc.obj	:	opnafunc.asm	..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					opna.inc            \
+					opnafreq.inc
+opnasnd.obj	:	opnasnd.asm	..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					opna.inc            \
+					opndeflt.inc
+opnavol.obj	:	opnavol.asm	..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					opna.inc
+
+

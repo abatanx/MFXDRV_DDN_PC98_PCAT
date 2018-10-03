@@ -1,0 +1,196 @@
+#‚Ä‚Ğ‚Á‚Ûproject.
+# MFXDDN?.LIB makefile
+# --------------------
+#  Äcompile‚É‚ÍAˆÈ‰º‚ÌƒvƒƒOƒ‰ƒ€‚ª•K—v‚Å‚·B
+#    Turbo-C++ ver.1.01 tcc.exe
+#    Turbo-Link         tlink.exe
+#    Tlib               tlib.exe
+#    touch
+#    make
+#
+#    MFXDRV/DDN kernel ƒ\[ƒXˆê®
+#
+#  ‚»‚Ì‘¼‚ÌƒRƒ“ƒpƒCƒ‰(ms-c‚È‚Ç)‚ğg—p‚·‚é‚Æ‚«‚ÍA‚±‚Ìmakefile‚ğC³
+#  ‚µ‚Ä‚­‚¾‚³‚¢B
+#
+# copyright (c) 1993,94 by ABA / Interfair all rights reserved.
+#
+# makefile copyright (c) 1993,94 by ABA  all rights reserved.
+#
+#
+# Caution
+# -------
+#    ‚È‚¨AŠeíƒfƒBƒŒƒNƒgƒŠAƒƒ‚ƒŠ[ƒ‚ƒfƒ‹ŠÖŒW‚Í sysdir.inc ‚Æ‚¢‚¤
+#@ƒtƒ@ƒCƒ‹‚ğİ’è‚Ü‚½‚ÍC³‚µ‚Ä‚­‚¾‚³‚¢B
+#
+#
+
+
+!include	"sysdir.inc"
+
+!if	!$d(memorymodel)
+memorymodel	=	$(memmodel)
+!endif
+
+ASSEMBLERMODEL	=	$(memorymodel)
+
+!if   $(memorymodel)==0
+CCOMPILERMODEL	=	$(TinyOpt)
+exec		=	mfxddnt
+CDEFTMP		=	__TINY__
+!elif $(memorymodel)==1
+CCOMPILERMODEL	=	$(SmallOpt)
+exec		=	mfxddns
+CDEFTMP		=	__SMALL__
+!elif $(memorymodel)==2
+CCOMPILERMODEL	=	$(MeduimOpt)
+exec		=	mfxddnm
+CDEFTMP		=	__MEDIUM__
+!elif $(memorymodel)==3
+CCOMPILERMODEL	=	$(CompactOpt)
+exec		=	mfxddn
+CDEFTMP		=	__COMPACT__
+!elif $(memorymodel)==4
+CCOMPILERMODEL	=	$(LargeOpt)
+exec		=	mfxddnl
+CDEFTMP		=	__LARGE__
+!elif $(memorymodel)==5
+CCOMPILERMODEL	=	$(HugeOpt)
+exec		=	mfxddnh
+CDEFTMP		=	__HUGE__
+!else
+!error sysdir.inc ‚Ìmemoryƒ‚ƒfƒ‹w’è‚ª•s³‚Å‚·B
+!endif
+
+!if $(CompilerSw)==C_MSC
+CDEF		=	-D$(CDEFTMP)
+!else
+CDEF		=	
+!endif
+
+!if $(Kernel)==1
+KnlS1	= knlctrl.obj
+KnlS2	= mddnknl.obj
+!endif
+!if $(Masterlib)==1
+MtlibS1 = bgmlplym.obj
+MtlibS2 = flzsysfm.obj
+!endif
+
+#
+# project files 
+#
+objs =	fl.obj								\
+	ddnasm.obj	addchain.obj	bgmcont.obj			\
+	bgmfout.obj	bgmpause.obj	bgmplay.obj	bgmstop.obj	\
+	dcmnotem.obj	dcmprog.obj	dcmstart.obj	dcmvolex.obj	\
+	delchain.obj	getchain.obj	getchnla.obj	getdrvn.obj	\
+	getdrvna.obj	getdtypa.obj	getvera.obj	getwork.obj	\
+	mcb.obj		memory.obj	seplaya.obj	bgminit.obj	\
+	bgmlplay.obj	cmusbuf.obj	ddne.obj	ddnlib.obj	\
+	ddntool.obj	errtype.obj	getchnl.obj	getdrvnm.obj	\
+	getdtype.obj	getver.obj	seload.obj	seplay.obj	\
+	$(KnlS1)	$(KnlS2)					\
+	strlib.obj	strlib2.obj	flzsysfp.obj			\
+	mld_func.obj	mld.obj		dcmecm.obj			\
+	bgmlplyf.obj	seloadfl.obj	mldfl.obj			\
+	getstats.obj	getpart.obj	notebuf.obj			\
+	bgmlhead.obj	bgmlhedf.obj	$(MtlibS1)	$(MtlibS2)
+
+#
+# object and executable file be made.
+#
+.c.obj:
+	@echo [4;33m -- Compiling : $< -- [m
+	$(Compiler) $(CCOMPILERMODEL) $(CompilerOpt) $(CDEF) $<
+.asm.obj:
+	@echo [4;36m -- Assembling : $< -- [m
+	$(Assembler) $(AssemblerOpt) /dMEMORYMODEL=$(ASSEMBLERMODEL) /dPROGMODE=LIBTYPE /I$(kernel) $<
+#
+# library be made.
+#
+$(exec).lib : $(objs)
+	@echo [42m -- Making $(exec).lib -- [m
+	@del $(exec).lib
+	$(Librarian) $(exec).lib @object
+	copy $(exec).lib $(lib)
+#	cd b:\lib
+#	make
+	@echo [41m -- Completed -- [m
+
+#
+# program object be made by.
+#
+
+ddnmodel.inc		:	sysdir.inc
+	touch	ddnmodel.inc
+mfxddn.h		:	sysdir.inc	ddnbuilt.h
+	touch	mfxddn.h
+ddnasm.obj		:	ddnasm.asm	ddndef.inc	ddnmodel.inc
+addchain.obj		:	addchain.asm	ddndef.inc	ddnmodel.inc
+bgmcont.obj		:	bgmcont.asm	ddndef.inc	ddnmodel.inc
+bgmfout.obj		:	bgmfout.asm	ddndef.inc	ddnmodel.inc
+bgmpause.obj		:	bgmpause.asm	ddndef.inc	ddnmodel.inc
+bgmplay.obj		:	bgmplay.asm	ddndef.inc	ddnmodel.inc
+bgmstop.obj		:	bgmstop.asm	ddndef.inc	ddnmodel.inc
+dcmnotem.obj		:	dcmnotem.asm	ddndef.inc	ddnmodel.inc
+dcmprog.obj		:	dcmprog.asm	ddndef.inc	ddnmodel.inc
+dcmstart.obj		:	dcmstart.asm	ddndef.inc	ddnmodel.inc
+dcmvolex.obj		:	dcmvolex.asm	ddndef.inc	ddnmodel.inc
+dcmecm.obj		:	dcmecm.asm	ddndef.inc	ddnmodel.inc
+delchain.obj		:	delchain.asm	ddndef.inc	ddnmodel.inc
+getchain.obj		:	getchain.asm	ddndef.inc	ddnmodel.inc
+getchnla.obj		:	getchnla.asm	ddndef.inc	ddnmodel.inc
+getdrvn.obj		:	getdrvn.asm	ddndef.inc	ddnmodel.inc
+getdrvna.obj		:	getdrvna.asm	ddndef.inc	ddnmodel.inc
+getdtypa.obj		:	getdtypa.asm	ddndef.inc	ddnmodel.inc
+getvera.obj		:	getvera.asm	ddndef.inc	ddnmodel.inc
+getwork.obj		:	getwork.asm	ddndef.inc	ddnmodel.inc
+getpart.obj		:	getpart.asm	ddndef.inc	ddnmodel.inc
+getstats.obj		:	getstats.asm	ddndef.inc	ddnmodel.inc
+notebuf.obj		:	notebuf.asm	ddndef.inc	ddnmodel.inc
+mcb.obj			:	mcb.asm		ddndef.inc	ddnmodel.inc
+memory.obj		:	memory.asm	ddndef.inc	ddnmodel.inc
+seplaya.obj		:	seplaya.asm	ddndef.inc	ddnmodel.inc
+knlctrl.obj		:	knlctrl.asm	ddndef.inc	ddnmodel.inc
+mld_func.obj		:	mld_func.asm	ddndef.inc	ddnmodel.inc
+mld.obj			:	mld.c		mfxddn.h
+mldfl.obj		:	mldfl.c		mldfl.c		mfxddn.h
+bgminit.obj		:	bgminit.c	mfxddn.h
+bgmlplay.obj		:	bgmlplay.c	mfxddn.h
+bgmlplyf.obj		:	bgmlplyf.c	bgmlplay.c	mfxddn.h
+bgmlplym.obj		:	bgmlplym.c	bgmlplay.c	mfxddn.h
+bgmlhead.obj		:	bgmlhead.c	mfxddn.h
+bgmlhedf.obj		:	bgmlhedf.c	bgmlhead.c	mfxddn.h
+cmusbuf.obj		:	cmusbuf.c	mfxddn.h
+ddne.obj		:	ddne.c		mfxddn.h
+ddnlib.obj		:	ddnlib.c	mfxddn.h
+ddntool.obj		:	ddntool.c	mfxddn.h
+errtype.obj		:	errtype.c	mfxddn.h
+getchnl.obj		:	getchnl.c	mfxddn.h
+getdrvnm.obj		:	getdrvnm.c	mfxddn.h
+getdtype.obj		:	getdtype.c	mfxddn.h
+getver.obj		:	getver.c	mfxddn.h
+seload.obj		:	seload.c	mfxddn.h
+seloadfl.obj		:	seloadfl.c	seload.c	mfxddn.h
+seplay.obj		:	seplay.c	mfxddn.h
+strlib.obj		:	strlib.c	mfxddn.h
+strlib2.obj		:	strlib2.c	mfxddn.h
+flzsysfp.obj		:	flzsysfp.c	mfxddn.h
+flzsysfm.obj		:	flzsysfm.c	mfxddn.h
+fl.obj			:	fl.c		fl.h		mfxddn.h
+mddnknl.obj		:	mddnknl.asm
+mddnknl.asm	:	$(kernel)\main.asm	$(kernel)\interrpt.asm	\
+			$(kernel)\mmlbin.asm	$(kernel)\decput.asm	\
+			$(kernel)\hexput.asm	$(kernel)\binput.asm	\
+			$(kernel)\ddn.inc	$(kernel)\stdio.inc	\
+			$(kernel)\model.inc				\
+			ddnmodel.inc	ddndef.inc
+	sfmtf < $(kernel)\main.asm     >  mddnknl.asm
+	sfmtf < $(kernel)\interrpt.asm >> mddnknl.asm
+	sfmtf < $(kernel)\mmlbin.asm   >> mddnknl.asm
+	sfmtf < $(kernel)\decput.asm   >> mddnknl.asm
+	sfmtf < $(kernel)\hexput.asm   >> mddnknl.asm
+	sfmtf < $(kernel)\binput.asm   >> mddnknl.asm
+	type end.asm >>mddnknl.asm
+

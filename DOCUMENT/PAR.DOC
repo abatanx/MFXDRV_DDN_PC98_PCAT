@@ -1,0 +1,70 @@
+=====================================================
+  par.lib と filelink の共存方法 (※鳥獣用鑽孔飼料)
+=====================================================
+
+exeファイルに par形式及びfilelink形式のファイルの共存方法を示します。
+mfxddn.libは、独自にfilelink形式のファイル統合フォーマット(FILELNK.LV1及び
+EXELNK.LV1)を持っており、parと全く違う方法で、そのリンク位置を示して
+いますので、parとの共存が可能です。ただし、つなげる位置は、
+
+FILE先頭                                         ファイル終焉
+["MZ"<-------EXEファイル-------->][<--PAR-->][<--FILELINK-->]
+
+上図のように、EXEファイル、PARファイル、FILELINKファイルの順に
+結合しなければなりません。
+
+例として、bobon.exe に parおよびfilelink形式のファイルの結合方法を示します。
+
+----
+1.bobon.exe は、
+#include <mfxddn.h>
+
+int main(int argc,char **argv)
+{
+	fl_file( argv[0] );
+		:
+		:
+		:
+}
+
+と、先頭に fl_file 関数を付加して下さい。
+また、mud演奏開始は、mfxddn_bgm_play_filelink()
+      mld組み込みは、mfxddn_load_driver_filelink()
+を用いて下さい。
+さらに、mfxddn.com も付加したい場合は、
+      mfxddn_install_kernel()
+      mfxddn_remove_kernel()
+を置くことにより、mfxddn.com mld.exe もまったくなく、独自に filelinkされた xdv
+ファイルをロードすることができます。ただし、*_kernel() 関係の関数は
+都合上、nearcall typeのメモリーモデル(tiny.small,compactなど)でしか扱えませ
+ん。
+----
+
+2.mfxddn関連以外のデータファイルは、par.exe および copy コマンド
+  を用いて、exeファイルの後ろにくっつけます。
+  例)
+  >par a test.par *.*
+  >copy /b bobon.exe+test.par bobon.ex2
+  >del bobon.exe
+  >ren bobon.ex2 bobon.exe
+----
+
+3.mfxddn関係のファイル(～.mud ～.xdv ～.eud)などは、mddn1???.lzh 同包の
+  filelink.exe によって1つのファイルとしてくっつけます。
+  例)
+  >filelink a test.fld *.mud
+  >filelink a test.fld *.xdv
+----
+
+4.bobon.exe に test.fld をexelinkします。
+  例)
+  >filelink e bobon.exe test.fld
+--------
+mfxddn.lib内部の関数は、ファイルポインタのseekを行っています。
+par.libが、後ろにファイルポインタのseekできない(原理を考えたらあたりまえのよ
+うな気がする)ので、このような方法になります。ｺﾞﾒﾝﾈ。ほんとは、parにしたかった
+の。ｳﾙｳﾙ。
+
+ABA / Interfair
+
+

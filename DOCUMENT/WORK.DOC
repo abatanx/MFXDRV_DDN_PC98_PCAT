@@ -1,0 +1,38 @@
+
+ソースファイル(ddn.inc)から抜粋しています。なお、構造体で定義しています。
+
+TRUE	=  01h
+FALSE	=  00h
+
+___ 変数名 ____ サイズ 初期値_______ No. コメント______________________________
+    use_flag    db      ?           ; 0 :このトラックを使用中か?(TRUE/FALSE)
+    driver_no   db      ?           ; 1 :使用ドライバのテーブル登録ナンバー
+    channel     db      ?           ; 2 :ドライバのチャンネル
+    mus_ofs     dw      ?           ; 3 :演奏データのオフセットアドレス
+    mus_seg     dw      ?           ; 5 :演奏データのセグメントアドレス
+    steptime    dw      ?           ; 7 :次の命令までのステップタイム
+    note        db      ?           ; 9 :ノート(更新される)
+    velocity    db      ?           ; 10:ベロシティー
+    program     db      ?           ; 11:プログラムナンバー
+    volume      db      ?           ; 12:ボリューム
+    expression  db      ?           ; 13:エクスプレッション
+    modulation  db      ?           ; 14:モジュレーション
+    panpot      db      ?           ; 15:パンポット
+    bank        dw      ?           ; 16:バンク
+    pkeypresser db      ?           ; 18:ポリフォニックキープレッシャー
+    hold1       db      ?           ; 19:ホールド    (TRUE:on FALSE:off)
+    poltament   db      ?           ; 20:ポルタメント(TRUE:on FALSE:off)
+    sustenuto   db      ?           ; 21:ソステヌート(TRUE:on FALSE:off)
+    soft        db      ?           ; 22:ソフト      (TRUE:on FALSE:off)
+    poltctrl    db      ?           ; 23:ポルタメントコントロール
+    ueff1sendlv db      ?           ; 24:汎用エッフェクト１
+    ueff2sendlv db      ?           ; 25:汎用エッフェクト２
+    ueff3sendlv db      ?           ; 26:汎用エッフェクト３
+    chpresser   db      ?           ; 27:チャンネルプレッシャー
+    pitchbend   dw      ?           ; 28:ピッチベンドレンジ
+    note_count  dw      ?           ; 30:ノートカウンター(Note on毎にカウントする)
+    note_total  db      ?           ; 32:発生中のノートのトータル
+    note_ofs    dw      ?           ; 33:ノートバッファのあるオフセット
+    note_seg    dw      ?           ; 35:ノートバッファのあるセグメント
+
+

@@ -1,0 +1,49 @@
+# 
+# MFXDDN.COM makefile
+#
+# copyright (c) 1993 by ABA / Interfair all rights reserved.
+# 
+# makefile copyright (c) 1993 by ABA  all rights reserved.
+#
+!include        "..\sysdir.inc"
+
+#
+# project files 
+#
+objs =  
+exec    = itvtimv
+base    = itvtimv
+prog    = b:                                    # programming drive
+tmp     = k:                                    # temporary   drive
+lib     = a:\turboc\lib
+junktest= b:\mfxddn\test
+#
+# object and executable file be made.
+#
+.asm.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tasm /ml /m $<
+.c.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tcc -mc -c $<
+
+$(exec).xdv : $(base).obj $(tmp)$(exec).lib
+	@echo [42m -- Making $(exec)... -- [m
+	tlink /x /t $(base).obj ,$(exec).xdv ,,$(tmp)$(exec)
+	@copy $(exec).xdv $(junktest):
+	@echo [41m -- Complete -- [m
+#
+# library be made.
+#
+$(tmp)$(exec).lib : $(objs)
+	@echo [46m -- Making $(exec).lib public library -- [m
+	@del $(tmp)$(exec).lib
+	tlib $(tmp)$(exec).lib @object
+
+#
+# program object be made by.
+#
+$(base).obj     :       $(base).asm     ..\kernel\stdio.inc \
+					..\kernel\ddn.inc    
+
+

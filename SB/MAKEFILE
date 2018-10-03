@@ -1,0 +1,74 @@
+# 
+# sb.xdv makefile		DDNê—p sbƒhƒ‰ƒCƒo[ sb.xdv
+#
+# copyright (c) 1994 by ABA / Interfair all rights reserved.
+# 
+# makefile copyright (c) 1994 by ABA  all rights reserved.
+#
+!include	"..\sysdir.inc"
+
+#
+# project files 
+#
+objs =	sbterm.obj	sbinit.obj	sbfunc.obj	sbsound.obj	\
+	sbvol.obj
+exec	= sb
+base	= sb
+
+#
+# object and executable file be made.
+#
+.asm.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tasm /ml $<
+.c.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tcc -mc -c $<
+
+$(exec).xdv : $(base).obj $(tmp)$(exec).lib
+	@echo [42m -- Making $(exec)... -- [m
+	tlink /t /x $(base).obj ,$(exec).xdv ,,$(tmp)$(exec)
+	@copy $(exec).xdv $(junktest):
+	@echo [41m -- Complete -- [m
+#
+# library be made.
+#
+$(tmp)$(exec).lib : $(objs)
+	@echo [46m -- Making $(exec).lib public library -- [m
+	@del $(tmp)$(exec).lib
+	tlib $(tmp)$(exec).lib @object
+
+#
+# program object be made by.
+#
+sb.obj		:	sb.asm		..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					sb.inc            \
+					sbterm.inc        \
+					sbfunc.inc        
+sbterm.obj	:	sbterm.asm	..\kernel\stdio.inc \
+			sbfltr.inc	..\kernel\ddn.inc   \
+					sb.inc            \
+					sbterm.inc        \
+					sbfunc.inc        
+sbinit.obj	:	sbinit.asm	..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					sb.inc            \
+					sbterm.inc        \
+					sbfunc.inc        
+sbfunc.obj	:	sbfunc.asm	..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					sb.inc            \
+					sbterm.inc        \
+					sbfreq.inc
+sbsound.obj	:	sbsound.asm	..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					sb.inc            \
+					sbterm.inc        \
+					sbdeflt.inc
+sbvol.obj	:	sbvol.asm	..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					sb.inc            \
+					sbterm.inc
+
+

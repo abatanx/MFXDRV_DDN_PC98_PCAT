@@ -1,0 +1,399 @@
+.ll 76
+.so @orm.ntf
+.so @pri.ntf
+.book_style
+.mh /MFXDDN user's manual//ver.1.00DOC/
+.mf ''- % -'DIL1994'
+
+.\"docname
+eazy.doc
+.hl
+.\"tilte
+DOS汎用音源ドライバ
+.ce
+MFXDRV/DDN version 1.00 簡略説明書
+.\"Copyright表示
+.ce
+copyright (c) 1993,94 by T.Kobayashi / Interfair(DIL)
+.ce
+All Rights Reserved.
+
+.hl
+
+.chapter はじめに
+.in 4
+　簡単な説明書です。これを読んでから、mfxddn.doc を読むとより一層
+いろいろ分かるかもしれません。
+
+.chapter 簡単な使い方
+.in 4
+　まずはドライバの常駐です。これがないと始まりません。
+.refer
+mfxddn
+.referend
+で、常駐します。
+
+　まずは、サンプル曲を鳴らしてみましょう。
+sample.lzh の中に、melobox.mud という、OPN/SSGに対応した曲データ
+が入っています。なお、演奏可能なファイルの拡張子は、～.mudです。
+
+　このシステムでは、mfxddn.comを常駐しただけでは音をならしてくれません。
+音を鳴らす音源ドライバと、時間(テンポ)を計測するタイマドライバを組み込んで
+やらなければならないのです。まずは、テンポ計測にインターバルタイマ、
+sample曲はOPN/SSGに対応しているので、OPNとSSGの音源ドライバを組み込みます。
+　なお、ドライバは拡張子が ～.xdv というファイルです。
+.refer
+mld opn,ssg,itvtimer
+.referend
+これで、opn/ssgに対応している曲を鳴らすことが出来ます。
+
+　これで準備が整いました。演奏しましょう。
+.refer
+mip melobox.mud
+.referend
+で、鳴るはずです。ところで、他の曲を演奏しようとしたとき鳴ってくれないことが
+あるかもしれません。演奏しようとした曲が opn/ssg に対応していないのかも
+しれないので、その曲のドキュメントを良く読んで mld でドライバを
+登録してあげてください。
+
+　終わるときは
+.refer
+mfxddn /r
+.referend
+で終わります。mld で登録したドライバも一緒に解放してくれます。
+メモリーから残らず消え去ってしまうので安心して下さい(笑)。
+
+.chapter 応用編(なにがだ)
+
+.section bgmlib形式の、～.bgm ファイルを鳴らしてみよう。
+　フリーソフトウェアのいろいろな分野で活躍しているBEEP音源ライブラリ bgmlib
+.note
+現在は、master.lib に統合されています。
+形式のファイルを鳴らす技術を伝授します(笑)。
+
+　まずは、bgmlib形式の～.bgmファイルを見つけましょう。これを仮に
+"pippippi.bgm" と名付けます。さて、このままではmfxdrv/ddnで鳴らすことが
+できません。そこで、bgmlib形式のファイルを変換する bgm2mmd.exe を
+つかいます。
+.refer
+bgm2mmd pippippi.bgm
+.referend
+で、変換できます。うまく変換できないことがあるかもしれません。
+その時はエラーの起きた行数が表示されますから、その行を修正して下さい。
+
+　うまくいくと、ファイルが pippip01.mmd pippip02.mmd ..... というふうに
+できあがります。～.mmd というのは、mfxdrv/ddn標準mmlコンパイラ形式
+.note
+XMML3.00形式 と呼んであげてください(笑)
+のMMLファイルです。これを、MMLコンパイラ mplus.exe で演奏ファイルに
+変換します。
+.refer
+mplus pippip01.mmd
+.referend
+で、コンパイルされます。
+
+うまくいったら、第1章のごとく鳴らしてみましょう。bgm2mmd は、
+曲をssgに変換してコンバートしますので、
+.refer
+.{
+.nf
+mfxddn
+mld ssg,itvtimer
+.}
+.referend
+で、システムを常駐させて
+.refer
+.{
+mip pippip01
+.}
+.referend
+で演奏が開始されます。
+　終わるときは、
+.refer
+mfxddn /r
+.referend
+で OK です。
+　ところで、MMLコンパイラ mplus.exe は、悲しいことにワイルドカードに
+対応していないので、bgm2mmdで、mmdファイルがたくさんできたときは、
+１個１個地道にコンパイルしてください(ｺﾞﾒﾝﾈ szﾟ)。
+
+.section 標準MIDIファイル(～.mid)を鳴らしてみよう。
+　MFXDRV/DDNは、MIDIをもならせるパワーを持ってます。もちろん像が踏んでも壊れません(意味不明)
+。鳴らしてみましょう。
+もちろん MIDI機器(GS音源とか)は必要です。
+　まず、適当なところから ～.mid を持ってきて下さい。sample.lzhの中に
+いろいろはいってますが、他から気に入った曲をもってきた方が良いでしょう(笑)。
+レコンポーザー形式(～.rcp)は、cvs.exe
+.note
+Hajime Koike氏のフリーソフトウェアです。
+などでコンバートしてください。さて、コンバートしたい標準MIDIファイルを、
+仮に "gerogero.mid" と名付けます。
+この ～.midというファイルの形式は、このままでは演奏できません。
+そこで、mcv.exe と、ml.exeというプログラムが必要です。
+mcv.exe は、標準MIDIファイルコンバーターで、ml.exe はmudを作るプログラム
+です。ml.exeは、カレントディレクトリか、パスの通ったディレクトリに置いて
+下さい。
+
+　さて、
+.refer
+mcv gerogero
+.referend
+でコンバートします。うまくいくと、gerogero.mudができあがります。
+　さて、鳴らしてみましょう。mcv.exe は、
+曲をMIDIとしてコンバートしますので、
+.refer
+.{
+.nf
+mfxddn
+mld midi,itvtimer
+.}
+.referend
+で、システムを常駐させて
+.refer
+.{
+mip gerogero
+.}
+.referend
+で演奏が開始されます。
+　終わるときは、
+.refer
+mfxddn /r
+.referend
+で OK です。
+
+.chapter ヤクザなつかいかた
+
+　ところで、なんでわざわざ外部のドライバを登録してやらなきゃいけんのかー、と
+お怒りの方もいるかも
+.note
+いるかなぁ...(笑)
+しれません。でも、これはこれで利点があります。それを説明しましょう。
+
+　まず、～.xdvというドライバは、すべてDRVID
+.note
+DRiVer's IDentification の略です。
+という名札みたいなものを持って
+います。例をあげると、midi.xdvは"MIDI"、ssg.xdvは"SSG"、opn.xdvは"OPN"、
+itvtimer.xdvは"ITVTIMER98"といった感じです。ということは、この名札を
+書き換えてやると、曲データをごまかして演奏できるかもしれないですね。
+演奏できるんですよ、これが(わっはっは←バカ)。
+DRVIDの知り方は、ドライバのドキュメントを読むか、xdvファイルをmielとか
+fdとかのファイラーで覗くなどすると、分かると思います。ファイラーで
+覗いたときは、そのファイルの最初の方にかいてあります。
+
+　さて、大抵のドライバに /id というオプションが用意されていると思いますが、
+これは、DRVIDを指定された名前に変更するというものです。これをつかって
+先ほど OPNとSSGで演奏させた"melobox.mud"をBEEPで演奏してみましょう。
+　なお、OPNパートのみを演奏させてみます。
+まずは、ドライバを常駐。
+.refer
+mfxddn
+.referend
+
+次がミソです。
+.refer
+mld beep /id=OPN,itvtimer
+.referend
+これで、beep.xdvとopn.xdvをごまかしました。つまり、名札(DRVID)は
+OPNなのに中身はBEEPというドライバです。たとえるならば、偽造運転免許証を持った
+無免許運転者ってとこですね(意味不明)。
+　さて、重要な名札にもう一つ、DRVCH
+.note
+DRiVer's usable maximum CHannel(ドライバの使用可能最大チャンネル)の略です。
+というものがあり、これはドライバまたは音源が演奏できる最大のチャンネル数
+のことです。たとえばmidi.xdvなら16チャンネル、opn.xdv、ssg.xdvなら
+3チャンネルといった具合です。BEEPでは、デフォルトでDRVCHが 1 です。
+beep.xdvは特殊で、時分割で音をならす(分散発声)をおこなうことができるので、
+この最大発音チャンネル数を増やすことが出来ます。そのオプションが /ch です。
+なお、/ch オプションは、対応していないドライバが多いかも。
+OPNは普通3チャンネルで演奏するので、beepもなんとかして3チャンネルなら
+しましょう。つまり、演奏可能チャンネル数を3チャンネルにしてしまえばいいのです。
+　上から順に実験しているひとなら、いま、beep.xdvが組み込まれている筈なので
+とりあえず、組み込みなおします。実験してない人は、mfxddn の行からどうぞ。
+.refer
+.{
+.nf
+mfxddn /r
+mfxddn
+.}
+.referend
+それで、ここからミソですね。
+.refer
+mld beep /id=OPN /ch=3,itvtimer
+.referend
+これで、okです。
+　さぁ演奏してみましょう。
+.refer
+mip melobox
+.referend
+BEEPで鳴っていますか? やーすごいですね(笑)。
+同じように、MIDIでも鳴らすことが出来ます。
+.refer
+mld midi /id=OPN,itvtimer
+.referend
+に変更するだけです。なお、同じDRVIDのドライバを組み込もうとしたとき
+メッセージが表示されて組み込めません。一度 mfxddn.com を解放してから
+組み込みなおして下さい。
+
+.bp
+.chapter 曲もかいてみる。
+
+　むぅ、ただならすだけならバカでもできます(うそ)。というわけで、
+なにか曲を書いてみましょう。そこで必要なのが mplus.exe という
+標準XMMLコンパイラです。
+　最初から難しい曲もなんですから、チューリップを書いてみましょう。
+エディターで下のモノを打ち込んで下さい。
+
+例)chu.mmd
+.refer
+.{
+.nf
+#title チューリップのうた。
+.cc ?
+.object _main
+?cc .
+MELODY=BEEP(0);
+{
+       MELODY   t120l4o5q90;
+       MELODY   cde2 cde2;
+       MELODY   gedcded2;
+       MELODY   cde2 cde2;
+       MELODY   gedcdec2;
+       MELODY   ggegaag2;
+       MELODY   eeddc1;
+}
+.}
+.referend
+.in 4
+　最初は、中身が分からなくても構いません。とにかく鳴らしてみます。
+　まずは、コンパイルです。さてコンパイルするために必要なモノは、mplus.exe と
+ml.exe です。この2つは必須です。なお、ml.exe は、必ずカレントディレクトリか、
+パスの通ったディレクトリに置いて下さい。
+.in 0
+.ll 100
+.quote
+.{
+.nf
+A>mplus chu
+music driver MFXDDN XMML3.00 compiler mPlus(mfxc+) version 1.xx
+copyright (c) 1991-94 by ABA / T.Kobayashi and Interfair All Rights Reserved.
+chu.mmd:
+        obj(0):_main      in chu.mmd
+ compiled :chu.mmd(L00013,100%)
+        Fatal Error Messages: 0
+        Warning     Messages: 0
+
+        Available memory  :  378720bytes.
+
+music driver MFXDDN XMML3.00 object linker ML version 2.41 
+copyright (c) 1993 by ABA / T.Kobayashi and Interfair All Rights Reserved.
+chu.mud:
+No_ Objectname__________ Filename____________
+  0 _main                j:\chu.mbj          
+        Available memory  :  301504bytes.
+
+A>
+.}
+.quoteend
+.ll 76
+.in 4
+
+　うまくコンパイルできると、上のようなメッセージが出ます。また
+エラーの時は、
+.in 0
+.ll 100
+.quote
+.{
+.nf
+music driver MFXDDN XMML3.00 compiler mPlus(mfxc+) version 1.xx
+copyright (c) 1991-94 by ABA / T.Kobayashi and Interfair All Rights Reserved.
+chu2.mmd:
+        obj(0):_main      in chu2.mmd
+Error:chu2.mmd(L00005) 'MeLODY' というトラックは存在しません。
+Error:chu2.mmd(L00005) 't120l4o5q90' というトラックは存在しません。
+ compiled :chu2.mmd(L00013,100%)
+        Fatal Error Messages: 2
+        Warning     Messages: 0
+
+        Available memory  :  378720bytes.
+
+.}
+.quoteend
+.ll 76
+.in 4
+などとエラーがでて、コンパイル動作が終了します。
+(L00005)とかありますが、この行がエラーのある行なのでここを調べて
+もういちどコンパイルしましょう。
+
+　さて、コンパイルに成功すると、mudファイルができます。
+前述の通りのchu.mmdなら、BEEP音源に対応していますので、mfxddn と
+ mld beep としてシステムを常駐させて、mip chu で演奏させてみて下さい。
+きっと鳴るはずです。
+
+　とまぁ、手順はだいたいこのような感じですが、chu.mmdファイルの内容について
+簡単に説明します。ねないでね(笑)。
+
+　まず、#title というのは、曲のタイトルを設定します。べつに有っても無くても
+構いません。他にも作曲者を設定する #composer や、編曲者の #arranger など
+いろいろあります。そこんところは、mplus.doc を見て下さい。
+
+　さて、次。.object ... です。うーん、.object _main ～{～} 
+と、大まかにみてみましょう。すると、
+{～} の中に MELODY という文字がはいっていますね。XMMLでは、.object ～ {～} で
+{と} の間に曲を書かないといけません。これは決まりです。まぁ、意味としては
+_main という名前の譜面に {～} という曲を書きますよっ、という感じで捉えて
+おいてください。なお、_main は、_main でないといけません。_main を _baka とか
+に変えると曲が正しく生成できません。しつこいようですが、かならず _main です(笑)。
+
+　ところで、.object _main から { の間に、MELODY=BEEP(0); という行があります。
+だいたい予測がつくと思いますが、この間で、MELODYのトラック をBEEPのチャンネル0でならしなさい
+ということをあらかじめ指定します。もちろん、SSG で鳴らしたければ MELODY=SSG(0);
+とか設定できます。チャンネル番号は、DRVCH-1 までの数で指定して下さい。つまり
+SSGが3チャンネルならせるなら、0～2 までの 3つ...ということです。
+　さて、MELODY=BEEP(0),SSG(0); という書き方もできます。
+これはいったいなんなんでしょうか。これは、BEEPが登録されてなければ
+SSGでならしなさいという意味です。この書き方は4レベルまで指定できます。
+つまり、MELODY=MIDI(0),OPN(0),SSG(0),BEEP(0); というような書き方が
+できるわけです。他にも *COND *SOUND OFF などがありますが、これらは
+mplus.doc を見て下さい。
+
+　{～} の中身に移ります。書き方は、[トラック名] [MML列]; という感じに
+なります。ここでは、MELODY t120l4o5q90; とかがこれに相当します。
+この行が実際に演奏されるところになります。...というわけで、次に、MML列の説明に移ります。
+　BASICなどでMMLを使ったことがあるひとなら、簡単に理解できるでしょう。
+まず、t テンポの設定を行います。l は、デフォルト音長。ここでは、4分音符
+です。o は、オクターブ。qは、ゲートタイムというもので実際の発音時間の
+設定。単位は % です。ここでは、90% です。発音はお馴染みの c,d,e,f,g,a,b。
+c から順に、ドレミファソラシドに相当します。rは休符です。
+chu.mmd をみるとたまに c2 とかありますね。これは、この音だけは2分音符
+で鳴らせ、、、という意味になります。この数字を省略した場合、先ほど
+でてきた、デフォルト音長設定 l で決めた音長になります。
+
+　ざっと説明すると、このような感じになりますがいかがでしょうか。
+mplus.exe は、BEEPだけでなくMIDIも完全にコントロールできるような
+仕様になってますし、マクロ機能などもかなり強力です。しかし、ちょっと遅いのが
+玉にキズですが(爆死)。詳しくは、わかりにくい mplus.doc を見て下さい(笑)。
+他にも沢山の MMLコマンドがありますので、全部つかってみましょう(おい)。
+
+.bp
+.chapter というわけで・・・
+　おおざっぱに説明してみましたが、いかがでしょうか。
+使えば使うほどいままでの音源ドライバにないあやしいことが
+可能ですので、ちょっと複雑ですが、頑張ってマスターしてみてください。
+各ドキュメントが、ちょっとばかり専門的になってますが、わかりにくいところや
+全然わからんところ(笑)は、私(ABA)の方へmailを下されば、
+できるだけおこたえしますので、これからもよろしくお願いします。
+
+.bp
+.chapter 謝辞及び著作権表示、使用条件など
+.so cpright.ntf
+
+.in 0
+.hl
+.ri
+Copyright (c) 1991,92,93,94 by T.Kobayashi and □
+.ri
+Interfair Lab. □
+.ri
+all rights reserved. □
+

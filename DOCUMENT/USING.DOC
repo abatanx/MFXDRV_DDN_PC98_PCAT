@@ -1,0 +1,254 @@
+ntf 2.1: using.ntf(8)(0)<>
+invalid command:.chapter 実際の使用方法
+
+
+
+                                                                        
+
+
+
+    ○mplus.exeの使い方
+          ここでは実際のcompileについて説明します。
+ntf 2.1: using.ntf(17)(0)<>
+invalid command:.refer
+          まず、MMLファイルの拡張子は～.mmdに統一してください。 たとえば
+        inner.mmdというファイルを作成してコンパイルしたい場合、 次のよう
+        に操作します。
+ntf 2.1: using.ntf(22)(0)<>
+invalid command:.referend
+        mplus inner
+
+        正常にコンパイルが行われた場合は、
+ntf 2.1: using.ntf(26)(0)<>
+invalid command:.refer
+    music driver MFXDDN XMML3.00 compiler mPlus(mfxc+) version 1.00
+    copyright (c) 1991-94 by ABA / T.Kobayashi and Interfair All  Rights
+    Reserved.
+    inner.mmd:
+            obj(0):_main      in inner.mmd
+            Fatal Error Messages: 0
+            Warning     Messages: 0
+
+ntf 2.1: using.ntf(38)(0)<>
+invalid command:.referend
+            Available memory  :  422656bytes.
+
+          と表示されます。 obj(?):.... in .... という表示は、"シリアル番
+        号0にinner.mmd
+        に記述されている_mainというオブジェクトを登録中です"という意味に
+        とって
+        下さい。もちろん登録中に文法ミスなどが発生した場合、エラーが表示
+        されます。
+          Fatal  Error  Messages  というのはコンパイル続行不能な致命的エ
+        ラー、
+        Warning  Messages というのはコンパイルは続行可能だが、これでいい
+        のか?という
+        警告の事を示し、それぞれエラーが出現した数を表示しています。
+          実際にエラーが出た場合のメッセージの見方について説明します。
+        たとえば、  あるトラックに\というコマンド(このコマンドは存在しな
+        い)が使用
+        されていたとします。するとコンパイル中には次のようなメッセージが
+        表示されます。
+
+ntf 2.1: using.ntf(53)(0)<>
+invalid command:.refer
+    music driver MFXDDN XMML3.00 compiler mPlus(mfxc+) version 1.00
+    copyright (c) 1991-94 by ABA / T.Kobayashi and Interfair All  Rights
+    Reserved.
+    inner.mmd:
+            obj(0):_main      in fight.mmd
+    Error:inner.mmd(L00004) '\'は解釈不可能なMMLコマンドです。
+            Fatal Error Messages: 1
+            Warning     Messages: 0
+
+ntf 2.1: using.ntf(66)(0)<>
+invalid command:.referend
+            Available memory  :  407440bytes.
+          まず、Error:というのはFatal Errorのことを示します。Errorにはい
+        くつかの
+ntf 2.1: using.ntf(70)(0)<>
+invalid command:.box 20 20 20
+
+        タイプがあり、コンパイル処理などに次のような影響を及ぼします。
+ntf 2.1: using.ntf(72)(0)<>
+invalid command:.boxnc
+        メッセージ
+ntf 2.1: using.ntf(74)(0)<>
+invalid command:.boxnc
+        種類
+ntf 2.1: using.ntf(76)(0)<>
+invalid command:.boxnr
+        対処方法
+ntf 2.1: using.ntf(78)(0)<>
+invalid command:.boxnc
+        Error
+ntf 2.1: using.ntf(80)(0)<>
+invalid command:.boxnc
+        致命的エラー
+        コンパイルは続行するが、オブジェクトを吐き出さない。
+ntf 2.1: using.ntf(85)(0)<>
+invalid command:.boxnr
+        また、mplusは、0以外のリターンコードを返す。
+
+
+                                                                        
+
+
+ntf 2.1: using.ntf(87)(0)<>
+invalid command:.boxnc
+
+
+                                                                        
+
+
+        Warning
+ntf 2.1: using.ntf(89)(0)<>
+invalid command:.boxnc
+        警告
+ntf 2.1: using.ntf(91)(0)<>
+invalid command:.boxnr
+        とりあえず値を補正し、コンパイルを続行。
+ntf 2.1: using.ntf(93)(0)<>
+invalid command:.boxnc
+        System Error
+ntf 2.1: using.ntf(95)(0)<>
+invalid command:.boxnc
+        致命的システムエラー
+ntf 2.1: using.ntf(97)(0)<>
+invalid command:.boxnr
+        その時点でコンパイルを強制中断。
+ntf 2.1: using.ntf(99)(0)<>
+invalid command:.boxnc
+        System Warning
+ntf 2.1: using.ntf(101)(0)<>
+invalid command:.boxnc
+        システム警告
+ntf 2.1: using.ntf(103)(0)<>
+invalid command:.boxend
+        そのままコンパイルは続行
+
+          次にファイル名とエラーが発生した行数を表示します。
+        ここでは、 inner.mmd(L00004)という表示なので、inner.mmdの4行目で
+        エラー
+        が発生したぞ、という意味です。
+          最後はエラーメッセージです。もし、その行にエラーがどうしても
+        見つからない場合、文の前後関係からエラーが発生することがあります
+        ので注意して
+        ください。
+
+          致命的エラーが無く特にオプション指定が無い場合、 ml.exe(オブジ
+        ェクトリンカ)
+        を呼び出して、直接～.mudファイル(演奏可能ファイル)を作成します。
+        ml.exeがpathの通ったディレクトリに存在しない場合、   warningメッ
+        セージが表示されて
+        リンクされませんので、注意して下さい。ml.exeはpathの通ったディレ
+        クトリに
+        格納しておくのがいいでしょう。
+
+    ○mplus.exeオプション
+ntf 2.1: using.ntf(122)(0)<>
+invalid command:.quote
+          mplus.exeでは以下のオプションが使用可能です。
+        -c       コンパイルのみを行う
+        -l(?)    リンカ(ml.exe)に、オプション -(?) を渡す。
+        *.mbj    一緒にlinkする。
+        -i(?)    #include 命令で参照されるディレクトリを指定する。
+ntf 2.1: using.ntf(131)(0)<>
+invalid command:.quoteend
+        -d,-x    デバッグモード
+
+          -c オプションを指定すると、カレントディレクトリに～.mbs,～.mbj
+        ファイルを
+        作成します。
+          -l   オプションを利用すると、 ml.exeの制御もできるようになりま
+        す。たとえば
+        ml.exeの～.mudファイル最適化オプション -o  を使用するときは  -lo
+        と指定
+        することにより、利用することが出来ます。
+          *.mbj は、ml.exeを呼び出したときに、これらを一緒に引き渡して
+        リンクすることができます。
+          -i オプションは、#include で読み込みたいファイルが存在するディ
+        レクトリ
+        を指定します。TCCのように ; で区切っていくつも羅列することはでき
+        ません(;;)。
+        いずれ対応したいですね。(例)-ia:\mplus\include このとき #include
+        abc.mac と
+        すると、最初に a:\mplus\include\abc.mac を探して、なかった場合カ
+        レントディ
+        レクトリを探します。
+
+
+
+                                                                        
+
+
+
+
+                                                                        
+
+
+          なお、上記のオプションは、mplus.cfg に記述しておくことができま
+        す。
+ntf 2.1: using.ntf(149)(0)<>
+invalid command:.refer
+        例:mplus.cfgの内容
+        -ia:\mplus\include
+        -lo
+        -lu
+ntf 2.1: using.ntf(158)(0)<>
+invalid command:.referend
+          includeディレクトリを  a:\mplus\include にし、リンカに最適化オ
+        プションと、
+        音色自動リンク機能を引き離すことを設定します。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                        
+
+

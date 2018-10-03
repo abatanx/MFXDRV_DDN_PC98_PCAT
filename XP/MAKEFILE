@@ -1,0 +1,59 @@
+# 
+# mplus.exe makefile
+#
+# copyright (c) 1993 by ABA / Interfair all rights reserved.
+# 
+# makefile copyright (c) 1993 by ABA  all rights reserved.
+#
+
+# 
+# ƒVƒXƒeƒ€ƒfƒBƒŒƒNƒgƒŠ‹¤’ÊINCLUDEƒtƒ@ƒCƒ‹
+# makefile copyright (c) 1994 by ABA  all rights reserved.
+#                                                               Interfair 1994.
+
+#
+# ŠeŒä‰Æ’ë‚ÌŠÂ‹«‚É‡‚í‚¹‚ÄAˆÈ‰º‚ğİ’è‚µ‚Ä‚Ë`B
+#
+
+prog		= b:				# ŠJ”­—pƒhƒ‰ƒCƒu
+tmp		= j:				# ì‹Æ—pƒhƒ‰ƒCƒu
+lib		= a:\turboc\lib			# TCC‚ÌLIB‚ªŠi”[‚³‚ê‚Ä‚¢‚éPATH
+
+#
+# project files 
+#
+objs =	xp.obj		xp_amode.obj	xp_bmode.obj	xp_sound.obj
+exec	= xp
+#debugobj= $(lib)\c0t.obj
+#debuglib= $(lib)\cs.lib
+
+#
+# object and executable file be made.
+#
+.asm.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tasm /ml /m $<
+.c.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tcc -c $<
+
+$(exec).exe : $(tmp)$(exec).lib $(lib)\tls.lib
+	@echo [42m -- Making $(exec)... -- [m
+	tlink $(lib)\c0c.obj , $(exec).exe ,, $(tmp)$(exec) $(lib)\mfxddn $(lib)\masterc $(lib)\cc
+	@echo [41m -- Complete -- [m
+#
+# library be made.
+#
+$(tmp)$(exec).lib : $(objs)
+	@echo [46m -- Making $(exec).lib public library -- [m
+	@del $(tmp)$(exec).lib
+	tlib $(tmp)$(exec).lib @object
+
+#
+# program object be made by.
+#
+xp.obj		:	xp.c		xp.h
+xp_amode.obj	:	xp_amode.c	xp.h
+xp_bmode.obj	:	xp_bmode.c	xp.h
+xp_sound.obj	:	xp_sound.c
+

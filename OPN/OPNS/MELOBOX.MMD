@@ -1,0 +1,54 @@
+;
+; 習作／Piano1音色テスト mplus ver.1.02以降
+; Tab=4;
+;
+#transpose	-5
+#title		MelodyBoxのテスト／どこかの廃虚の洋館で鳴っているオルゴールのイメージです(笑)
+#composer	aba@interfair
+#arranger	isl30126
+#artist		ist
+#copyright	t.Kobayashi
+
+#include	stdio.mac
+#include	sound.mac
+#include	ym2203.mac
+
+.object _main
+m1 = MIDI(0),OPN(0);
+b1 = MIDI(1),OPN(1);
+b2 = MIDI(2),OPN(2);
+c1 = MIDI(3),SSG(0);
+c2 = MIDI(4),SSG(1);
+c3 = MIDI(5),SSG(2);
+ecm = *SOUND;
+cond = *COND;
+{
+ecm		@ecm[(SSG_DRVIDNUM),(SSG_DRVTYPE),0x00,w0x00,(MusicBox),
+			0,3,-1,3,-1,3,-1,3,-1,6,-1,6,0,30,
+			-1,10,-1,10,-1,10,-1,10,-1,10,-1,10,-1,10,-1,10,-1,10,0x80];
+
+cond	t80@mv127;
+
+; -- Chord;
+; D A | Bm | G A | D
+;
+;													↓わざと遅らせてます。
+m1	@(MusicBox)(Key_Dmaj)	@v100@	e127  o6l8q100m20;
+b1	@(MusicBox)(Key_Dmaj)	v10		@e127 o4l8q100m20;
+b2	@(MusicBox)(Key_Dmaj)	v10		@e127 o3l8q100m20;
+c1	@(MusicBox)(Key_Dmaj)	v9		@e127 o5l8q100;
+c2	@(MusicBox)(Key_Dmaj)	v9		@e127 o5l8q100;
+c3	@(MusicBox)(Key_Dmaj)	v9		@e127 o5l8q100;
+
+m1	[2 f4f4e4fe e4dcd4dc : <b4>cde4c<b a1];
+b1	[2 dfa4cea4 dfb4d2   : dgb4cea4 <a>dfa>d2< ];
+b2	[2 d4.d//100<a4.a//100 b4.b//100b4.b//100 g4.g//100a4.a//100 >d4.d//100d2];
+c1	[2 d2c2 d1 d2c2 a1];
+c2	[2 f2e2 f1 g2e2 d1];
+c3	[2 a1   b1 b2a2 f1];
+
+m1	b4>cde4dc d4<a4>d2;
+b1	dgb4 cea4 dfa>cd2;
+b2;
+}
+

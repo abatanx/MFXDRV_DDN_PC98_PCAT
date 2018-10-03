@@ -1,0 +1,229 @@
+.ll 76
+.so @orm.ntf
+.so @pri.ntf
+.mh /mcv user's manual//ver.1.21C DOC/
+.mf ''- % -'DIL1994'
+.book_style
+
+.\"docname
+mfxddn.doc
+.hl
+.\"tilte
+標準MIDIファイルコンバータ
+.ce
+MCV version 1.21
+.\"Copyright表示
+.ce
+copyright (c) 1993,94 by T.Kobayashi / Interfair(DIL)
+.ce
+All Rights Reserved.
+
+.hl
+
+.chapter はじめに
+.in 4
+
+　Format0もしくはFormat1の標準MIDIファイル(～.mid)を、MFXDRV/DDNで演奏可能な
+～.mudファイルに変換するプログラムです。あぁ、単純明快。
+　なお、Format0は、暫定的に対応しているので、のちにどうにかなる(ってどうな
+んだよ)かもしれません。また、SC-88専用の演奏データで一部コンバートに失敗
+するものがあります。現在対処中。また、MacBinaryに対応していないので、
+ヘッダ情報はあらかじめ削除しておいてください。これも対処中(笑)。
+
+.bp
+.chapter 使い方
+.section 使う前に
+
+　これだけは、やってください。
+
+.item
+.{
+環境変数 tmp を、なるだけ速いディスクデバイスに設定して下さい。
+コンバートが高速になります。たとえば、j:ドライブがRAMDISKなら、
+.refer
+set tmp=j:\
+.referend
+としておいてください。
+.}
+.itemnr
+.{
+パスの通ったディレクトリか、もしくはカレントディレクトリに ml.exe を
+置いて下さい。ml.exeは、mfxddn.com と同じlzhファイルの中に格納されています。
+.}
+.itemend
+
+.section 簡単な使い方
+
+　どこからか、標準MIDIファイル(～.mid)を用意してきます。レコンポーザーなどの
+～.RCM形式はコンバートできないので、あらかじめ cvs などで標準MIDIファイル
+形式にしておきます。仮に"kikokiko.mid" とでもしておきます。
+
+　さて、コンバートは、
+.refer
+mcv kikokiko.mid
+.referend
+　でokです。あとは勝手にmcvが、ml.exeを呼び出してリンク作業まで
+おこなってくれます。
+
+　演奏は、mcv.exeは、'MIDI'の曲を作成しますから、
+.refer
+.{
+.nf
+mfxddn
+mld midi,itvtimer
+mip kikokiko.mud
+.}
+.referend
+　でokです。簡単ですね。
+
+.bp
+.chapter ちょっとつっこんでみよう
+.section オプションについて
+
+　mcv.exeの書式は以下の通りです。
+.refer
+mcv.exe [ファイル名|-<オプション>].....
+.referend
+
+　オプションには、以下のものが使用可能です。
+.quote
+.{
+.nf
+-c      コンバートのみを行います。
+-l?     Linker に ? のオプションを引き渡します。
+-e      MIDI の効果音ファイルを作成します(ﾃｽﾄ中)。
+-x      マップファイルを作成しません。
+*.mbj   指定したMIDIファイルと一緒に LINKします。
+.}
+.quoteend
+
+.subsection -cオプション
+　-cオプションは、コンバートのみを行い、ml.exeを用いてlinkしません。
+つまり、～.mbj及び～.mbsが作成されます。
+　～.mbjのオブジェクト名は、"_ファイル名_midi" となります。
+"popo.mid"をコンバートすると、"_popo_midi" というオブジェクト名を持った
+"popo.mbj"と"popo.mbs"が作成されます。なお、
+オブジェクトに関しては、mplus.docを読めばだいたい分かると思いますので
+、ぜひ読んでおいて下さい。mplusの#precedeを用いると便利かも。
+
+.subsection -lxオプション
+  -lxオプションは、リンカにxというオプションを渡します。例として、
+.refer
+mcv -lo popo.mid
+.referend
+　とすると、ml.exeに -o オプション(最適化)が選ばれて勝手に最適化
+してくれます。
+
+.subsection -x
+　-xは、普通、トラックのコメントとかを記録した～.mapファイルを作成しますが、
+これを抑制するオプションです。
+
+.subsection *.mbj
+　他の～.mbjファイルを一緒にリンクします。例としては、
+.refer
+mcv a.mid b.mbj c.mbj d.mbj
+.referend
+　として作成します。ただし、a.midから～.mbjの中身を参照していないと
+意味がないので注意してください。
+
+.section infファイルについて
+
+　一回コンバートすると、～.inf というファイルが作成されます。
+すでに存在する場合には作成しません。
+infファイルの中身は、次のような意味をもちます。
+
+.quote
+.{
+.nf
+title       曲のタイトルを設定します
+artist      アーティスト名を設定します
+lyric       作詞者を設定します
+composer    作曲者を設定します
+arranger    編曲者を設定します
+copyright   著作権保有対象を設定します
+track?=     各トラックの情報を設定します
+.}
+.quoteend
+
+.subsection トラック情報について
+XMML3.00 では、各トラックをそれぞれ別の音源でならせます。
+mplusにもトラック状態設定というものがありますが、それと
+まったく同一のものです。これは、各トラックに独自の音源割り当て情報を含ませ
+ることができ、その情報で各トラックを独自の音源でならすことができます。
+その情報を設定するのが "track? =" という行です。
+その書き方には3タイプあります。それを説明していきますね。
+
+.quote
+1. track? = 音源名(チャンネル),音源名(チャンネル)....
+.quoteend
+
+左から順番に指定された音源ドライバと音源のステータスを調べていき
+演奏可能なら、そのトラックを演奏可能な音源で演奏します。
+４つまで指定することができ、４つを越えるとそのトラックは演奏され
+ません。
+チャンネルは、0...n-1 までです。音源名は、各音源ドライバの
+ドライバID と対応しています。
+
+トラック12をMIDI(チャンネルは1～16まで使用可能)のチャンネル10(DRUMS)で鳴らした
+い場合は、
+
+.refer
+track0 = MIDI(9)
+.referend
+
+と指定します。
+
+　また、音源名に OFF を用いると、そのトラックの演奏をしません。
+
+.refer
+track? = MIDI(4),OPN(3),BEEP(1),OFF
+.referend
+
+.quote
+2. track?=object名(トラック番号)
+.quoteend
+
+　これは、他の mbj ファイルからデータをそのトラックで演奏するという
+ものです。
+たとえば、SC-55 の LCD に メッセージを出しながら演奏したいとき、
+LCDを表示するための mid ファイルを momo_lcd.mid
+曲の mid ファイルを momo.mid
+として、トラック31 で、LCD を表示させるように設定します。
+
+momo.inf に次のように設定します。
+
+.refer
+track31 = _momo_lcd_midi(0)
+.referend
+
+作成方法は、
+.refer
+.{
+.nf
+mcv -c momo_lcd.mid
+mcv momo.mid momo_lcd.mbj
+.}
+.referend
+です。ちょっとわかりずらいかな^^;。
+
+.quote
+3. track?=無指定
+.quoteend
+
+この場合、mcvは勝手に track? = MIDI(?) というようにコンバートします。
+チャンネルは、自動的に検出して書き出します。
+
+.bp
+.chapter 謝辞及び著作権表示、使用条件など
+.so cpright.ntf
+
+.in 0
+.hl
+mcv ver.1.21C
+.ri
+Copyright (c) 1993,94 by T.Kobayashi and □
+.ri
+Interfair Lab. □
+.ri
+all rights reserved. □
+

@@ -1,0 +1,54 @@
+;--- Information Header "j:loading.mbj" ---
+title      = "BOMBDITANK-IIテーマソング 『Elemental Secretagent』"
+artist     = "Interfair Sound Team(I.S.T.)"
+lyric      = "岩崎 成昭(IXA)"
+composer   = "小林 隆生(ABA)"
+arranger   = "小林 隆生(ABA) for OPN,OPNA,MIDI(GS)"
+copyright  = "Interfair / しゃう&メガド･ライヴ / 幻想★楽師団Ｆantasist"
+
+;--- Track Informations ---
+;track?    = _ｵﾌﾞｼﾞｪｸﾄ名(ﾄﾗｯｸ番号)        : 外部ｵﾌﾞｼﾞｪｸﾄ参照
+;track?    = 音源(ﾁｬﾝﾈﾙ),音源(ﾁｬﾝﾈﾙ), ... : 拡張音源割り当て
+;記述がない場合は、音源はMIDI、チャンネルは自動判別で行います。
+
+track0     = 
+track1     = 
+track2     = 
+track3     = 
+track4     = 
+track5     = 
+track6     = 
+track7     = 
+track8     = 
+track9     = 
+track10    = 
+track11    = _b2theme_opn(0)
+track12    = _b2theme_opn(1)
+track13    = _b2theme_opn(2)
+track14    = _b2theme_opn(3)
+track15    = _b2theme_opn(4)
+track16    = _b2theme_opn(5)
+track17    = _b2theme_opn(6)
+track18    = _b2theme_opn(7)
+track19    = _b2theme_opn(8)
+track20    = _b2theme_opn(9)
+track21    = _b2theme_opn(10)
+track22    = _b2theme_opn(11)
+track23    = _b2theme_opn(12)
+track24    = 
+track25    = 
+track26    = 
+track27    = 
+track28    = 
+track29    = 
+track30    = 
+track31    = 
+
+;--- Memo ---
+memo
+
+     BombDiTank-II Theme Song 『Elemental Secretagent』
+     --------------------------------------------------
+	for OPN,OPNA,SSG,MIDI(GS/GM)
+
+

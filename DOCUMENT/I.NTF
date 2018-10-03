@@ -1,0 +1,117 @@
+.ll 76
+.so @orm.ntf
+.so @pri.ntf
+.\"docname
+.mh /MFXDDN user's manual/midi.xdv/ver.1.00DOC/
+.mf ''- % -'DIL1994'
+
+itvtimer.doc
+.hl
+.\"tilte
+MFXDRV/DDN専用PC98/MPU(GS,GM),RS232C(GS,GM)
+.ce
+midi.xdv version 1.00
+.\"Copyright表示
+.ce
+copyright (c) 1993,94 by T.Kobayashi / Interfair(DIL)
+.ce
+All Rights Reserved.
+
+.hl
+
+※はじめに
+
+.in 4
+○これ
+.in 8
+.\"紹介文
+　MFXDRV/DDNで動作するMIDIインターフェースドライバです。GS音源および
+GM音源に対応していますが、ピアノモードで一応(ほんとに一応^^)ほとんど
+のMIDI音源でならせるでしょう(QY1*で実験(貧弱T_T))。
+
+.in 4
+○DRVIDは...
+.in 8
+'MIDI' です。
+
+.in 4
+○ECMアドレスは...
+.in 8
+0001 00 です。
+
+.in 4
+○動作機種
+.in 8
+.\"動作機種名
+　PC-9801/9821及びそれらの互換機上で動作します。
+使用に関しては、MIDIインターフェースまたは、RS232Cが必要です。
+もちろん、GS/GMなどMIDI機器が接続されていないと音が鳴りません。
+
+感じとしては、
+.{
+.nf
+[PC98]->[MPU]->[GS/GM音源]
+[PC98]->[RS232C]->[GS/GM音源]
+.}
+です。
+
+.in 0
+※つかいかた
+
+.in 4
+○組み込み方法
+.in 8
+　MFXDRV/DDNが常駐している状態で、mld.exe を使用して組み込みます。
+書式は、mld midi [オプション...] です。
+
+　常駐の例:
+.refer
+.{
+.nf
+mfxddn
+mld midi /p /mpu /gs,itvtimer
+.}
+.referend
+　ピアノモード、I/Fは、mpuでGS音源を使用する。
+
+　なお、解放はMFXDRV/DDNの解除時に同時に解放されます。
+
+.in 4
+○オプション
+.in 0
+.quote
+.{
+/gm 音源にGM音源を対象とします。マスターボリュームをボリュームで制御します。
+.br
+/gs 音源にGS音源を対象とします(デフォルト)。
+.br
+/mpu I/Fに MPU98/MPU98II/SuperMPUなどを用います(Roland社製)。
+.br
+/rs  I/Fに RS-232Cを使用します。8,10MHzどちらか自動判別します。
+.br
+/p ピアノモードにします。全部ピアノで演奏します。趣があります(笑)
+.br
+/io=xxxxh MPUのI/Oアドレスをxxxxhにします(デフォルト:/io=e0d0h)
+.br
+/id=xxxxx DRVIDを'MIDI'から'xxxxx'に変更します。エミュレート演奏できます。
+.br
+/int=xx INTレベルを指定します。あまりいじくらないでね(笑)。
+.}
+.quoteend
+
+.in 4
+○スペック及び機能など
+.in 8
+　別途の midi.spc をご覧下さい。読み方は、MFXDRV/DDN付属の
+マニュアルを参照下さい。
+
+.in 0
+※著作権とか。
+
+.so cpright.ntf
+
+.in 0
+.hl
+.\"docname
+itvtimer.doc
+

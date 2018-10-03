@@ -1,0 +1,59 @@
+# 
+# MFXDDN.COM makefile
+#
+# copyright (c) 1993 by ABA / Interfair all rights reserved.
+# 
+# makefile copyright (c) 1993 by ABA  all rights reserved.
+#
+!include	"sysdir.inc"
+
+#
+# project files 
+#
+objs =	interrpt.obj	mmlbin.obj					\
+	decput.obj	hexput.obj	binput.obj
+exec	= mfxddn
+#debugobj= $(lib)\c0t.obj
+#debuglib= $(lib)\cs.lib
+
+#
+# object and executable file be made.
+#
+.asm.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tasm /ml /m /dPROGMODE=COMTYPE $<
+.c.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tcc -mt -c $<
+
+$(exec).com : main.obj $(tmp)$(exec).lib
+	@echo [42m -- Making $(exec)... -- [m
+	tlink /t /s main.obj $(debugobj),$(tmp)tmp.com,,$(tmp)$(exec) $(debuglib)
+	@inc division.num
+	@ctime >$(tmp)tail.hed
+	@type division.num >>compile.log
+	@ctime >>compile.log
+	@type division.num >>$(tmp)tail.hed
+	@copy /b $(tmp)tmp.com+$(tmp)tail.hed $(exec).com
+	@copy $(exec).com $(junktest):
+	@echo [41m -- Complete -- [m
+#
+# library be made.
+#
+$(tmp)$(exec).lib : $(objs)
+	@echo [46m -- Making $(exec).lib public library -- [m
+	@del $(tmp)$(exec).lib
+	tlib $(tmp)$(exec).lib @object
+
+#
+# program object be made by.
+#
+stdio.inc	:	makefile
+main.obj	:	main.asm	stdio.inc	ddn.inc	
+interrpt.obj	:	interrpt.asm	stdio.inc	ddn.inc	\
+					timerdrv.inc
+mmlbin.obj	:	mmlbin.asm	stdio.inc	ddn.inc
+decput.obj	:	decput.asm	stdio.inc	ddn.inc
+hexput.obj	:	hexput.asm	stdio.inc	ddn.inc
+binput.obj	:	binput.asm	stdio.inc	ddn.inc
+

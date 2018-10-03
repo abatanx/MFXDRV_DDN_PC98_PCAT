@@ -1,0 +1,16 @@
+	CTRL___	COMMENT________	MESSAGE_______________________________________
+	00h	音色定義	[BANK]2 [音色NO]1 [拡張]5
+				[DT1ML1]1 [DT3ML3]1 [DT2ML2]1 [DT4ML4]1
+				[TL]1 [TL3]1 [TL2]1 [TL4]1
+				[KS1AR1]1 [KS3AR3]1 [KS2AR2]1 [KS4AR4]1
+				[DR]1 [DR3]1 [DR2]1 [DR4]1
+				[SR]1 [SR3]1 [SR2]1 [SR4]1
+				[SL1RR1]1 [SL3RR3]1 [SL2RR2]1 [SL4RR4]1
+				[FB/ALG]1
+	01h	音量補正	00h	音量補正を行わない
+				01h	音量補正を行う(デフォルト)
+	02h	レジスタ書込	[ADDRESS]1 [DATA]1
+
+[拡張]
+[MOD-SYNC]2 [MOD-SPEED]2
+

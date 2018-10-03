@@ -1,0 +1,751 @@
+.testversion
+.ver	0.99b
+.tab	8
+---------------------------------------------------------------------------
+MFXDRV/DDN(XMML3.00)
+
+         MFXDRV/DDNコントロールライブラリ 関数リファレンスマニュアル
+
+  copyright (c) 1993,94,95 by T.Kobayashi / Interfair all rights reserved.
+---------------------------------------------------------------------------
+
+※このライブラリについて
+	音源ドライバMFXDRV/DDN(mfxddn.com)をC言語で効果的に使用する
+	ための関数群です。
+
+※このライブラリを使用するときは…
+	同梱の mfxddn.h を #include で includeして下さい。
+	また、C言語で指定するメモリーモデルによって以下のライブラリを
+	リンカーでリンクして下さい。
+	
+	Model________	Library________
+	tiny		mfxddns.lib
+	small		mfxddns.lib
+	medium		mfxddnm.lib
+	compact		mfxddn .lib
+	large		mfxddnl.lib
+	huge		mfxddnh.lib
+	
+	
+	例)コンパクトモデルでコンパイルする場合
+	tcc -mc test.c mfxddn.lib
+
+---------------------------------------------------------------------------
+※関数早見表
+	mfxddn_bgm_init			ライブラリの初期化(メモリーを自動確保)
+	mfxddn_bgm_init2		ライブラリの初期化
+	mfxddn_bgm_play			演奏ファイル(MUD)の読み込み+演奏開始
+	mfxddn_bgm_play_filelink	mfxddn_bgm_playのfilelink版
+	mfxddn_bgm_start		演奏開始
+	mfxddn_bgm_stop			演奏ストップ
+	mfxddn_bgm_pause		演奏一時停止
+	mfxddn_bgm_continue		演奏一時停止解除
+	mfxddn_bgm_fadeout		フェードアウト演奏
+
+	mfxddn_se_load			効果音ファイル(EUD)の読み込み
+	mfxddn_se_load_filelink		mfxddn_se_loadのfilelink版
+	mfxddn_se_play			効果音発声
+
+	mfxddn_dcm_init			DCMシステム初期化
+	mfxddn_dcm_end			DCMシステム終了
+	mfxddn_dcm_noteon		DCMノートオン
+	mfxddn_dcm_noteoff		DCMノートオフ
+	mfxddn_dcm_volume		DCMボリューム設定
+	mfxddn_dcm_expression		DCMエクスプレッション設定
+	mfxddn_dcm_progchange		DCMプログラムチェンジ
+
+	mfxddn_get_driver_version	ドライバーのVersionの取得
+	mfxddn_get_driver_type		ドライバーのタイプの取得
+	mfxddn_get_driver_table		ドライバーの登録テーブル番号の取得
+	mfxddn_get_driver_canusech	ドライバーの使用可能チャンネル数の取得
+	mfxddn_getwork			ワークエリアの取得
+	mfxddn_get_driver_name		ドライバーのID(DRVID)の取得
+	mfxddn_add_chain_address	チェインバッファメモリの登録
+	mfxddn_get_chain_address	チェインバッファメモリの取得
+	mfxddn_del_chain_address	チェインバッファメモリの削除
+	mfxddn_get_counter		演奏カウンターの取得
+	mfxddn_get_meas			演奏小節の取得
+	mfxddn_get_meas_counter		演奏小節中のカウンターの取得
+	mfxddn_set_note_buffer		ノートバッファを登録
+	mfxddn_rel_note_buffer		ノートバッファを解放
+
+	mfxddn_install_check		mfxddn の常駐チェック
+	mfxddn_change_musicbuffer	演奏バッファの変更
+	mfxddn_errortype		エラータイプ(番号)の取得
+	mfxddn_errmsg			エラーメッセージの取得
+	mfxddn_add_space		DRVID文字列の補正
+
+	ddn_keep_highmemory		far メモリ取得
+	ddn_stay_memory			far メモリ常駐
+	ddn_free_memory			far メモリ解放
+	ddn_valtonum			文字列->数値変換
+
+	mfxddn_install_kernel		mfxddn.com(lib版) の組み込み
+	mfxddn_remove_kernel		mfxddn.com(lib版) の解放
+	mfxddn_load_driver		mld.exe(lib版)でのドライバ組み込み
+	mfxddn_load_driver_filelink	mfxddn_load_driverのfilelink版
+	
+	fl_file				filelinkされたファイル指定
+	fl_open				filelinkされたファイルをopenする
+	fl_switch			filelinkスイッチ制御
+
+---------------------------------------------------------------------------
+※関数リファレンス
+	この表の見方は、次の通りです。
+
+	usage:	文			プロトタイプ
+	return:	数値(OR)定数 意味	戻り値
+	appendix:			補足
+	range:				引数の取りうる範囲
+	ex:				例
+
+	ローカルな関数が他にもありますが、ここでは割愛させていただきます。
+
+---------------------------------------------------------------------------
+○	mfxddn_bgm_init			ライブラリの初期化(メモリーを自動確保)
+
+usage:	int mfxddn_bgm_init(void);
+
+	このLIBRARY群を使用する前に必ず実行しなければならない関数です。
+	mfxddn.com の常駐チェック、及び演奏バッファ(約64K)確保を自動的に
+	行い、内部変数を初期化してライブラリを稼働可能状態にします。
+	なお、master.lib と併用する場合、master.libライブラリ関数より
+	先にこの命令を実行しないといけません。
+	それがいやな時は、master.lib の関数で、メモリーを MFXDDN_MAXMUDSIZE
+	だけ確保して mfxddn_bgm_init2 を実行して下さい。
+
+return:		NULL		成功
+		EOF		使用不能
+---------------------------------------------------------------------------
+○	mfxddn_bgm_init2		ライブラリの初期化
+
+usage:	int mfxddn_bgm_init2(void far *buffer);
+
+	このLIBRARY群を使用する前に必ず実行しなければならない関数です。
+	mfxddn.com の常駐チェックを行い、内部変数を初期化してライブラリを稼
+	働可能状態にします。
+	buffer は演奏バッファで、ユーザーが確保する必要があります。
+
+ex:	seg = hmem_alloc( MFXDDN_MAXMUDSIZE/16+1 );
+	if( !seg )exit(1);
+	musicbuf = MK_FP(seg,0);
+	mfxddn_bgm_init2(musicbuf);
+
+return:		NULL		成功
+		EOF		使用不能
+---------------------------------------------------------------------------
+○	mfxddn_bgm_play			演奏ファイル(MUD)の読み込み+演奏開始
+
+usage:	int mfxddn_bgm_play(char *filename);
+
+	filename で指定された～.mudファイル(fullpath)をメモリーに読み込み
+	最適化ファイルの場合、展開して演奏を開始します。
+
+return:		NULL		成功
+		EOF		使用不能
+---------------------------------------------------------------------------
+○	mfxddn_bgm_play_filelink	演奏ファイル(MUD)の読み込み+演奏開始
+					filelink版
+
+usage:	int mfxddn_bgm_play_filelink(char *filename);
+
+	リンクされたexeファイルもしくはデータファイルの filenameで指定された
+	～.mudファイルをメモリーに読み込み演奏を開始します。
+	なお、あらかじめ fl_file関数で、リンクされたファイルを明示しておく
+	必要があります。
+
+ex:	fl_file("trek.dat");
+	mfxddn_bgm_play_filelink("teanan.mud");
+
+return:		NULL		成功
+		EOF		使用不能
+---------------------------------------------------------------------------
+○	mfxddn_bgm_start		演奏開始
+
+usage:	int mfxddn_bgm_start(void far *tablebuffer);
+
+	tablebuffer に入っているデータの演奏を開始します。
+	tablebuffer の内容は、次の通りです。
+	
+    tablebuffer - BGMインフォーメーショントランスファテーブル内容 -------
+    +0      byte    [トラック数 1..32 ] (以後、このトラック数を n とします)
+    +1      word    [タイムベース] 即値。48や96、480など。
+    +3      word    [Track 01データテーブルのオフセットアドレス]
+    +5      word    [Track 01データテーブルのセグメントアドレス]
+    +7      word    [Track 02データテーブルのオフセットアドレス]
+    +9      word    [Track 02データテーブルのセグメントアドレス]
+     :        :             :
+     :        :             :
+     :      word    [Track n データテーブルのオフセットアドレス]
+     :      word    [Track n データテーブルのセグメントアドレス]
+
+    ??:?? ------- Track データテーブル内容 ------------------------------
+    +0      16byte  [ドライバー名]
+    +16     byte    [チャンネル番号]
+    +17     ?       [以下、演奏データ]
+    ---------------------------------------------------------------------
+
+return:		NULL		成功
+		EOF		使用不能
+
+appendix:	mfxddn_bgm_play関数はファイルロード後、この関数を呼び出し
+		ています。
+---------------------------------------------------------------------------
+○	mfxddn_bgm_stop			演奏ストップ
+
+usage:	int mfxddn_bgm_stop(void);
+
+	現在、演奏しているのをストップします。
+	演奏していない場合は何も行いません。
+
+return:		NULL		成功
+		EOF		使用不能
+
+appendix:	mfxddn_bgm_play関数はファイルロード前に、この関数を呼び出し
+		て演奏を停止させています。
+---------------------------------------------------------------------------
+○	mfxddn_bgm_pause		演奏一時停止
+
+usage:	int mfxddn_bgm_pause(void);
+
+	現在、演奏しているのを一時停止します。
+	ただし、音はなりっぱなしです。
+
+return:		NULL		成功
+		EOF		使用不能
+---------------------------------------------------------------------------
+○	mfxddn_bgm_continue		演奏一時停止解除
+
+usage:	int mfxddn_bgm_continue(void);
+
+	一時停止している曲を一時停止の解除を行います。
+	一時停止していない場合は何も行いません。
+
+return:		NULL		成功
+		EOF		使用不能
+---------------------------------------------------------------------------
+○	mfxddn_bgm_fadeout		フェードアウト演奏
+
+usage:	int mfxddn_bgm_fadeout(int speed);
+
+	フェードアウト後、演奏を終了します。
+	フェードアウトを待たないで、親関数に戻ります。
+	speed はフェードアウトするスピードで、数値が小さいほど
+	速くフェードアウトします。でも、0 はだめ。
+
+	speed:	1...32767
+
+return:		NULL		成功
+		EOF		使用不能
+---------------------------------------------------------------------------
+○	mfxddn_se_load			効果音ファイル(EUD)の読み込み
+
+usage:	int mfxddn_se_load(
+		int no ,char *filename , char *drvid , 
+		int channel . int track );
+
+	バッファを確保して filenameで指定された効果音ファイル(EUD)を読み込
+	み、番号 no として待機させます。使用する音源は drvid がDRVID、
+	チャンネルは channel 、トラックは track に指定します。
+	実験的な物です^^;
+
+range:	no:	0...MAX_SEBUF-1
+	channel:0...
+	track:	0...31
+
+return:		NULL		成功
+		EOF		使用不能
+---------------------------------------------------------------------------
+○	mfxddn_se_load_filelink		効果音ファイル(EUD)の読み込み
+					filelink版
+
+usage:	int mfxddn_se_load_filelink(
+		int no ,char *filename , char *drvid , 
+		int channel . int track );
+
+	リンクされたexeファイルもしくはデータファイルの filenameで指定された
+	～.eudファイルをメモリーに読み込みます。
+	なお、あらかじめ fl_file関数で、リンクされたファイルを明示しておく
+	必要があります。
+	バッファを確保して filenameで指定された効果音ファイル(EUD)を読み込
+	み、番号 no として待機させます。使用する音源は drvid がDRVID、
+	チャンネルは channel 、トラックは track に指定します。
+	実験的な物です^^;
+
+ex:	fl_file("sperank.fld");
+	mfxddn_se_load_filelink(0,"gerogero.eud","SSG",0,31);
+
+range:	no:	0...MAX_SEBUF-1
+	channel:0...
+	track:	0...31
+
+return:		NULL		成功
+		EOF		使用不能
+---------------------------------------------------------------------------
+○	mfxddn_se_play			効果音発声
+
+usage:	int mfxddn_se_play(int no)
+
+	番号 no の効果音を発声します。
+	実験的な物なので不都合が起こるかもしれません。
+
+return:		NULL		成功
+		EOF		使用不能
+---------------------------------------------------------------------------
+○	mfxddn_dcm_init			DCMシステム初期化
+
+usage:	int mfxddn_dcm_init(int driverno);
+
+	ドライバテーブル driverno のドライバーでDCM機能を使用するまえに
+	初期化を行う関数です。
+	driverno は、mfxddn_get_driver_table関数で得られます。
+
+return:		NULL		初期化完了
+		EOF		使用不能
+---------------------------------------------------------------------------
+	mfxddn_dcm_end			DCMシステム終了
+
+usage:	int mfxddn_dcm_end(int driverno);
+
+	ドライバテーブル driverno のドライバーでDCM機能を使用したあと、
+	事後処理を行う関数です。
+	driverno は、mfxddn_get_driver_table関数で得られます。
+
+return:		NULL		処理完了
+		EOF		使用不能
+---------------------------------------------------------------------------
+○	mfxddn_dcm_noteon		DCMノートオン
+
+usage:	int mfxddn_dcm_noteon(
+		int driverno , int channel , int noteno ,
+		int velocity );
+
+	ドライバーテーブル driverno のドライバの、チャンネル channelで
+	ノート番号 noteno、ベロシティー velocity のノートをオン(発音)にしま
+	す。
+	driverno は、mfxddn_get_driver_table関数で得られます。
+
+range:	channel:	0...
+	noteno:		00h...7fh
+	velocity:	00h...7fh (00hは、noteoffと同じ)
+
+return:		NULL		成功
+		EOF		使用不能
+---------------------------------------------------------------------------
+○MACRO	mfxddn_dcm_noteoff		DCMノートオフ
+
+usage:	int mfxddn_dcm_noteoff(
+		int driverno , int channel , int noteno ,
+		int velocity );
+
+	ドライバーテーブル driverno のドライバの、チャンネル channelで
+	ノート番号 noteno、ベロシティー velocity のノートをオフにしま
+	す。
+	driverno は、mfxddn_get_driver_table関数で得られます。
+
+range:	channel:	0...
+	noteno:		00h...7fh
+
+return:		NULL		成功
+		EOF		使用不能
+
+appendix:	マクロで定義されています。実際には mfxddn_dcm_noteon を
+		velocity=0 で呼び出しています。
+---------------------------------------------------------------------------
+○	mfxddn_dcm_volume		DCMボリューム設定
+
+usage:	int mfxddn_dcm_volume( int driverno , int channel , int volume );
+
+	ドライバーテーブル driverno のドライバの、チャンネル channelの
+	ボリュームを volume に設定します。
+	driverno は、mfxddn_get_driver_table関数で得られます。
+
+range:	channel:	0...
+	volume:		00h...7fh
+
+return:		NULL		成功
+		EOF		使用不能
+---------------------------------------------------------------------------
+○	mfxddn_dcm_expression		DCMエクスプレッション設定
+
+usage:	int mfxddn_dcm_expression( int driverno , int channel , int expres);
+
+	ドライバーテーブル driverno のドライバの、チャンネル channelの
+	エクスプレッションを expres に設定します。
+	driverno は、mfxddn_get_driver_table関数で得られます。
+
+range:	channel:	0...
+	expres:		00h...7fh
+
+return:		NULL		成功
+		EOF		使用不能
+---------------------------------------------------------------------------
+○	mfxddn_dcm_progchange		DCMプログラムチェンジ
+
+usage:	int mfxddn_dcm_progchange( int driverno , int channel , int prog );
+
+	ドライバーテーブル driverno のドライバの、チャンネル channelの
+	音色(Instrument)を prog に設定します。
+	driverno は、mfxddn_get_driver_table関数で得られます。
+
+range:	channel:	0...
+	prog:		00h...7fh
+
+return:		NULL		成功
+		EOF		使用不能
+---------------------------------------------------------------------------
+○	mfxddn_get_driver_version	ドライバーのVersionの取得
+
+usage:	int mfxddn_get_driver_version(char *drvid);
+
+	DRVIDが、drvid のドライバのバージョンを取得します。
+	1.00 なら 返値は 100 、2.21なら、211というように
+	整数部*100+小数部 という形で返ります。
+	ドライバが登録されていないときは、とんちんかんな数値が
+	返ってくるかもしれません。
+
+return:		バージョンコード
+---------------------------------------------------------------------------
+○	mfxddn_get_driver_type		ドライバーのタイプの取得
+
+usage:	int mfxddn_get_driver_type(char *drvid);
+
+	DRVIDが、drvid のドライバーのタイプを取得します。
+
+return:		EOF		ドライバーが見つからない／使用不能
+		0x0000		音源ドライバー
+		0x1000		タイマードライバー
+		0x2000		その他のドライバー
+---------------------------------------------------------------------------
+○	mfxddn_get_driver_table		ドライバーの登録テーブル番号の取得
+
+usage:	int mfxddn_get_driver_table(char *drvid);
+
+	DRVIDが drvid の、登録されているテーブルの番号を返します。
+
+return:		EOF		ドライバーが見つからない／使用不能
+		0...15		番号
+---------------------------------------------------------------------------
+○	mfxddn_get_driver_canusech	ドライバーの使用可能チャンネル数の取得
+
+usage:	int mfxddn_get_driver_canusech(char *drvid);
+
+	DRVIDが drvid の、使用可能なチャンネル数を返します。
+
+return:		EOF		ドライバーが見つからない／使用不能
+		0...		使用可能なチャンネル数
+---------------------------------------------------------------------------
+○	mfxddn_get_work			ワークエリアの取得
+
+usage:	int mfxddn_get_work(int track,int workno);
+
+	トラック番号 track、ワーク番号 workno のワークエリアの内容を
+	返します。但し、1byteのワークも2byteのワークもすべて
+	2byteの int数値で返すので注意して下さい。
+
+	1byte の ワークの時は mfxddn_get_work_byteマクロを利用して下さい。
+
+return:		0...		ワークエリアの内容
+---------------------------------------------------------------------------
+○	mfxddn_get_driver_name		ドライバーのID(DRVID)の取得
+
+usage:	char far *mfxddn_get_driver_name(int driverno);
+
+	ドライバーテーブル drivernoの、DRVIDを取得します。
+	これで得られたポインタの直接操作はドライバーのエリアを
+	いじくることになりますので、できるだけ別のにコピーしたあとに
+	走査して下さい。
+
+return:		NULL		ドライバーがない
+		!NULL		DRVID文字列のポインター
+---------------------------------------------------------------------------
+○	mfxddn_add_chain_address	チェインバッファメモリの登録
+
+usage:	int mfxddn_add_chain_address(char far *buffer);
+
+	bufferを チェインバッファメモリーテーブルに登録します。
+	bufferは、mfxddn.com 解放時に自動的に解放されます。
+	bufferは、DOSコールのキープメモリーで確保されたものを
+	用いて下さい。それ以外で確保されたメモリーでの動作は保証しません。
+
+return:		NULL		登録成功
+		EOF		登録失敗
+---------------------------------------------------------------------------
+○	mfxddn_del_chain_address	チェインバッファメモリの削除
+
+usage:	int mfxddn_del_chain_address(char far *buffer);
+
+	mfxddn_add_chain_address関数で登録されたメモリー buffer を
+	テーブルから削除します。
+
+return:		NULL		削除成功
+		EOF		削除失敗
+---------------------------------------------------------------------------
+○	mfxddn_get_chain_address	チェインバッファメモリの取得
+
+usage:	char far *mfxddn_get_chain_address(void);
+
+	チェインバッファメモリーテーブルの先頭のアドレスを返します。
+	内容は次の通りです。
+
+    Plus___ TYPE___ COMMENT___________________________________________
+    0000    10byte  DBUFchain[00h]
+    000a    word    バッファ(1)の セグメント
+                        :
+                        :
+    ?       word    バッファ(n)の セグメント
+    ?+2     word    NULL
+
+return:		NULL		失敗
+		!NULL		テーブルの先頭アドレス
+---------------------------------------------------------------------------
+○	mfxddn_get_timebase		演奏中の曲のタイムベースを得る
+
+usage:	int mfxddn_get_timebase(void);
+
+return:		タイムベースの値(24～960)
+
+---------------------------------------------------------------------------
+○	mfxddn_get_tempo		演奏中の曲のテンポを得る
+
+usage:	int mfxddn_get_tempo(void);
+
+return:		テンポ(1～480)
+
+---------------------------------------------------------------------------
+○	mfxddn_get_mastervolume		演奏中の曲のマスターボリューム
+
+usage:	int mfxddn_get_mastervolume(void);
+
+return:		マスターボリューム(0～127)
+
+---------------------------------------------------------------------------
+○	mfxddn_get_counter		演奏中の曲のカウンターを得る
+
+usage:	long mfxddn_get_counter(void);
+
+return:		演奏中のカウンター
+
+---------------------------------------------------------------------------
+○	mfxddn_get_meas			演奏中の小節を得る
+
+usage:	int mfxddn_get_counter(void);
+
+	3/4 や、6/8 など、4/4 系でない曲では正常に小節が得られません。
+
+return:		演奏中の小節
+
+---------------------------------------------------------------------------
+○	mfxddn_get_meas_counter		演奏中の小節のカウンターを得る
+
+usage:	int mfxddn_get_meas_counter(void);
+
+	mfxddn_get_counter() % mfxddn_get_timebase() と同じです。
+
+return:		小節のカウンター
+
+---------------------------------------------------------------------------
+○	mfxddn_install_check		mfxddn の常駐チェック
+
+usage:	int mfxddn_install_check(void);
+
+	mfxddn.comが常駐しているかしてないかを判断する関数です。
+
+return:		NULL		常駐している
+		EOF		常駐していない
+---------------------------------------------------------------------------
+○	mfxddn_change_musicbuffer	演奏バッファの変更
+
+usage:	int mfxddn_change_musicbuffer(void far *buffer);
+
+	演奏バッファを変更します。通常は mfxddn_bgm_init関数で
+	自動的に確保されますが、そのバッファを変更する関数です。
+
+return:		NULL		変更完了
+		EOF		変更不可
+---------------------------------------------------------------------------
+○	mfxddn_errortype		エラータイプ(番号)の取得
+
+usage:	int mfxddn_errortype(void);
+
+	エラータイプ(番号)を取得します。
+
+return:		エラー番号
+---------------------------------------------------------------------------
+○	mfxddn_errmsg			エラーメッセージの取得
+
+usage:	char *mfxddn_errmsg(void);
+
+	エラーメッセージを返します。
+
+return:		エラーメッセージのポインター
+---------------------------------------------------------------------------
+○	mfxddn_add_space		DRVID文字列の補正
+
+usage:	void mfxddn_add_space(char *new_drvid,char *old_drvid);
+
+	ASCIIZで書かれた old_drvidを、正規表現された new_drvidに
+	書き換えます。
+	'MIDI' は、'MIDI           '
+	というように変換されます。
+---------------------------------------------------------------------------
+○	ddn_keep_highmemory		far メモリ取得
+
+usage:	char far *ddn_keep_highmemory(long size);
+
+	size分だけメモリーを確保します。
+	master.lib でメモリアクセスしている場合は、使用不可能です。
+
+return:		NULL		メモリーが確保できなかった
+		!NULL		メモリーの先頭のアドレス
+---------------------------------------------------------------------------
+○	ddn_stay_memory			far メモリ常駐
+
+usage:	int ddn_stay_memory(char far *buffer);
+
+	bufferで与えられたメモリーを常駐し、プロセス終了後もメモリに残るよ
+	うメモリブロックを変更します。
+
+return:		NULL		成功
+		EOF		失敗
+---------------------------------------------------------------------------
+○	ddn_free_memory			far メモリ解放
+
+usage:	int ddn_free_memory(char far *buffer);
+
+	bufferで与えられたメモリーを解放します。
+
+return:		NULL		成功
+		EOF		失敗
+---------------------------------------------------------------------------
+○	ddn_valtonum			文字列->数値変換
+
+usage:	int ddn_valtonum(char *str);
+
+	strで与えられた文字列数値を、数値に変換します。
+	文字列数値は次のものが使用できます。
+	10進数		例)2113 81
+	16進数		例)441H abh
+	2進数		例)10010101B 1100B
+
+return:		数値
+---------------------------------------------------------------------------
+○	mfxddn_install_kernel		MFXDRV/DDN(lib版)の組み込み
+
+usage;	int mfxddn_install_kernel(void);
+
+	tiny/small/compact版 ONLY!!!
+	----------------------------
+
+	MFXDRV/DDNシステムをプログラム中に組み込みます。
+	なお、mfxddnは、version 1.17 です。
+	約10KByteのコード領域を使用します。
+	このサービスを使用すると、mfxddn.com の常駐を
+	行わなくても、すべてのMFXDRV/DDN XMML3.00-APIを使用することが
+	できます。
+	ただし、プログラム終了時には必ず mfxddn_remove_kernel()を
+	実行してから終了させてください。
+
+return:		NULL		成功
+		EOF		失敗
+---------------------------------------------------------------------------
+○	mfxddn_remove_kernel		MFXDRV/DDN(lib版)の解放
+
+usage;	int mfxddn_remove_kernel(void);
+
+	tiny/small/compact版 ONLY!!!
+	----------------------------
+
+	mfxddn_install_kernel命令で組み込んだMFXDRV/DDNを
+	解放します。mfxddn_install_kernel命令を使用した場合、
+	プログラム終了時には必ずこの命令を実行してから終了させて
+	ください。
+
+return:		NULL		成功
+		EOF		失敗
+---------------------------------------------------------------------------
+○	mfxddn_load_driver		mld.exe(lib版)でのドライバ組み込み
+
+usage;	int mfxddn_load_driver(char *filename,char *option,int display);
+
+range:	display:	XDVTITLE_ON	...組み込み時にメッセージ表示
+			XDVTITLE_OFF	...       〃             非表示
+
+	XDVドライバを組み込みます。動作はmld.exeとまったく同一です。
+	これを使用すると、プログラムサイズがおおきくなります。
+	あしからず。
+
+return:		NULL		成功
+		EOF		失敗
+---------------------------------------------------------------------------
+○	mfxddn_load_driver_filelink	mld.exe(lib版)でのドライバ組み込み
+					filelink版
+
+usage;	int mfxddn_load_driver_filelink(char *filename,char *option);
+
+	リンクされたexeファイルもしくはデータファイルの filenameで指定された
+	～.xdvファイルを組み込みます。
+	なお、あらかじめ fl_file関数で、リンクされたファイルを明示しておく
+	必要があります。動作はmld.exeとまったく同一です。
+	これを使用すると、プログラムサイズがおおきくなります。
+	あしからず。
+
+	例)	fl_file( argv[0] );
+		mfxddn_install_kernel();
+		mfxddn_load_driver_filelink("midi.xdv","/p /id=MIDI");
+		mfxddn_load_driver_filelink("opn.xdv");
+		mfxddn_load_driver_filelink("ssg.xdv");
+		mfxddn_bgm_play_filelink("test.mud");
+
+return:		NULL		成功
+		EOF		失敗
+---------------------------------------------------------------------------
+○	fl_file				filelinkされたファイル指定
+
+usage;	int fl_file(char *filename);
+
+	filelink.exe で作成したファイルを filenameとすると、
+	そのファイルを走査してリンク状態を記憶し、fl_openに備えます。
+	この命令実行後、mfxddn_bgm_play_filelinkなどの命令が
+	使用可能となります。
+
+return:		NULL		成功
+		EOF		失敗
+---------------------------------------------------------------------------
+○	fl_open				filelinkされたファイルをopenする
+
+usage;	FILE *fl_open(char *filename,char *openmode);
+
+	fl_fileで走査されたファイル中に filenameが存在した場合
+	そのファイルを openmodeで提示された方法でオープンします。
+	なお、構造体FILEは、stdio.h をincludeしてください。
+	また、openmode及びfl_openの返値は、標準入出力関数fopen()
+	に準拠しています。
+	また本関数は、リンクされたファイルの該当するファイルを
+	さがし、そこにfseekしているだけなので、注意して下さい。
+	従って fseek命令は、絶対fp指定では正常なアクセスが
+	できません。
+	また本関数でオープンしたファイルは、標準入出力関数群
+	fgetc fputc fread fwrite fclose fseek getw putw getc ftell
+	fprintf fscanf などの命令が使用可能です。
+
+	例)	FILE *fpr;
+		int c;
+		fl_file("test.lib");
+		fpr = fl_open("alpha.txt","rb");
+		if( !fpr )exit(1);
+		while( (c=getc(fpr))!=EOF )fputc(c,stdout);
+		fclose(fpr);
+
+return:		NULL		失敗
+		!NULL		ファイル情報
+---------------------------------------------------------------------------
+○	fl_switch			filelinkスイッチ制御
+
+usage;	void fl_switch(int switch);
+
+	switch に EOFを設定すると、fl_fileの効果を無効にします。
+
+	例)	fl_switch(EOF);
+---------------------------------------------------------------------------
+

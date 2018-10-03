@@ -1,0 +1,59 @@
+======================================================================
+   MFXDRV/DDN(XMML3.00)専用 ～.BGMフォーマットコンバータ
+                              bgm2mmd
+Copyright (C) 1994 ABA / T.Kobayashi and Interfair All Rights Reserved
+======================================================================
+
+※概要
+	femyさんの、bgmlib形式の演奏ファイルを、mmdファイルに
+	コンバートするものです。
+
+	bgmファイルの中に複数の曲が含まれていた場合
+	(たとえば、test.bgm 中に 5つのファイルがあったばあい)
+	test01.mmd test02.mmd ..... test05.mmd
+	といったようにファイルがつくられます。
+
+	mmdファイルは、そのまま mplus.exe でコンパイルできます。
+
+	(使い方)
+	>bgm2mmd test.bgm
+	>mplus test01.mmd
+
+	これで、test.bgm の 1曲目、test01.mud が作成されます。
+	bgm2mmd は、デフォルトでSSG用に変換しますので、ドライバは
+	ssg.xdv を組み込んで下さい。
+
+	>mfxddn
+	>mld ssg,itvtimer
+	>mip test01.mud
+
+	これで演奏できるはずです。
+
+	もし、他の音源にしたいばあいは、bgm2mmd.cfg を次のように
+	書き換えて下さい。
+
+	(例) MIDIにしたいばあい。
+	1:MIDI(0)
+	2:MIDI(1)
+	3:MIDI(2)
+
+※ソフトウェアについて
+	本ソフトウェアはフリーソフトウェアです。本ソフトウェアを用いたことに
+	よる事故などについて作者(小林 隆生)は一切責任を負わない物とします。
+	また、バグの修正の義務はないものとします。
+	本ソフトウェアの著作権は、小林 隆生及びInterfair Laboratoryに帰属しま
+	す。
+	営利および非営利目的の利用は自由にしてもらって構いません。
+	また、転載時の連絡も不要です。改造も自由です。改造後の転載も
+	構いません。ただしその旨はドキュメントなどに記載して下さい。
+
+※連絡先
+	ISL-NET:	isl30126	ABA@Interfair
+	E-Mail:		s95702@polaris.yatsushiro-nct.ac.jp
+
+※代理連絡先
+	NIFTY SERVE	HGA02466@niftyserve.or.jp	(TEANAN/山本 弘)
+
+Development Group "Interfair Laboratory" All Rights Reserved. ---------------
+
+

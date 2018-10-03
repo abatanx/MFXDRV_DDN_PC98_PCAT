@@ -1,0 +1,56 @@
+# 
+# mplus.exe makefile
+#
+# copyright (c) 1993 by ABA / Interfair all rights reserved.
+# 
+# makefile copyright (c) 1993 by ABA  all rights reserved.
+#
+!include	"..\sysdir.inc"
+
+#
+# project files 
+#
+objs =	mplus.obj	file.obj	stack.obj	compile.obj	\
+	system.obj	object.obj	label.obj	makembj.obj	\
+	calc.obj
+exec	= mplus
+#debugobj= $(lib)\c0t.obj
+#debuglib= $(lib)\cs.lib
+
+#
+# object and executable file be made.
+#
+.asm.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tasm /ml /m $<
+.c.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tcc -c -P $<
+
+$(exec).exe : $(tmp)$(exec).lib $(lib)\tls.lib
+	@echo [42m -- Making $(exec)... -- [m
+	tlink $(lib)\c0l.obj , $(exec).exe ,, $(tmp)$(exec) $(lib)\tlsl $(lib)\cl
+#	tlink $(lib)\c0l.obj , $(exec).exe ,, $(tmp)$(exec) $(lib)\cl
+	@copy $(exec).exe $(junktest):
+	@echo [41m -- Complete -- [m
+#
+# library be made.
+#
+$(tmp)$(exec).lib : $(objs)
+	@echo [46m -- Making $(exec).lib public library -- [m
+	@del $(tmp)$(exec).lib
+	tlib $(tmp)$(exec).lib @object
+
+#
+# program object be made by.
+#
+mplus.obj		:	mplus.c		mplus.h
+file.obj		:	file.c		mplus.h
+stack.obj		:	stack.c		mplus.h
+compile.obj		:	compile.c	mplus.h		compile2.c
+system.obj		:	system.c	mplus.h
+object.obj		:	object.c	mplus.h
+label.obj		:	label.c		mplus.h
+makembj.obj		:	makembj.c	mplus.h
+calc.obj		:	calc.c		mplus.h
+

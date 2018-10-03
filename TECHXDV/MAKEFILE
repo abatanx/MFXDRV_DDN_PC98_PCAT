@@ -1,0 +1,57 @@
+# 
+# "snd.xdv" makefile
+# MFXDRV/DDN(XMML3.00(1.2))専用 音源ドライバ基本プログラム
+# makefile copyright (c) 1994 by ABA  all rights reserved.
+#
+
+#
+# snd.asm 及び sndfunc.asm のファイル名を書き換えた場合、
+# makefileと、objectの中の全部の snd を書き換えたファイル名に置換
+# してください。
+#
+
+#
+# 各御家庭の環境に合わせて、以下を設定してね～。
+# (注)junktest は、xdv ファイル作成後、勝手にコピーするディレクトリです。
+#
+prog	= b:			# 開発用ドライブ(このファイルがある
+				# ドライブです。)
+tmp	= k:			# 作業用ドライブ(RAMDISK)
+junktest= b:\mfxddn\test	# ファイル生成後にコピーする場所
+include = b:\mfxddn\kernel	# stdio.inc option.inc ddn.inc のある
+				# ディレクトリ(これらのファイルは
+				# mddn???s.lzhに含まれています)
+objs	= sndfunc.obj
+exec	= snd
+base	= snd
+
+.asm.obj:
+	@echo Assembling... $<
+	tasm /ml /i$(include) $<
+.c.obj:
+	@echo Compiling... $<
+	tcc -mt -c $<
+
+#
+# link
+#
+
+$(exec).xdv : $(base).obj $(tmp)$(exec).lib
+	@echo Making $(exec)...
+	tlink /t /x $(base).obj ,$(exec).xdv ,,$(tmp)$(exec)
+	@copy $(exec).xdv $(junktest):
+	@echo Complete.
+#
+# create each library
+#
+$(tmp)$(exec).lib : $(objs)
+	@echo Making $(exec).lib
+	@del $(tmp)$(exec).lib
+	tlib $(tmp)$(exec).lib @object
+
+#
+# how to make
+#
+snd.obj		:	snd.asm		snd.inc
+sndfunc.obj	:	sndfunc.asm	snd.inc
+

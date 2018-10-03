@@ -1,0 +1,1662 @@
+.\"    (c) Copyright 1990,1991 Tomoyuki Niijima
+.\"    All rights reserved
+.\"
+.if !pri_macro
+.{
+.ex pri_macro=1
+.\"
+.\" static values
+.\"
+.ex EBCDIC=0
+.ex ASCII=1
+.ex ENGLISH=0
+.ex JAPANESE=1
+.\"
+.\" default style setup
+.\"
+.\"
+.\" Standerd style for manual writing
+.\"
+.de book_style
+.ex CHAPTOP=6
+.ex CHAPBOTTOM=2
+.ex CHAPCENTER=1
+.ex CHAPINDENT=0
+.ex CHAPSIMPLE=0
+.ex SECTOP=2
+.ex SECBOTTOM=1
+.ex SECINDENT=0
+.ex INDENT_CONTENTS=3
+.if LANGUAGE==JAPANESE
+.ex PARAIN=2
+.ex PARAIN=5
+.ex PARATOP=1
+.ex BLOCKTOP=1
+.ed
+.\"
+.\" Standerd style for article writing
+.\"
+.de article_style
+.ex CHAPTOP=2
+.ex CHAPBOTTOM=1
+.ex CHAPCENTER=0
+.ex CHAPINDENT=0
+.ex CHAPSIMPLE=1
+.ex SECTOP=1
+.ex SECBOTTOM=1
+.ex SECINDENT=0
+.ex INDENT_CONTENTS=3
+.if LANGUAGE==JAPANESE
+.ex PARAIN=2
+.ex PARAIN=5
+.ex PARATOP=0
+.ex BLOCKTOP=1
+.ed
+.\"
+.\" Store Title
+.\"
+.de title
+.nb _tb
+.if rc<=0
+.ob _tb
+.\"
+.wb _tb
+.{
+.ex mode-=32
+.ll ll/2
+.nj
+.cc ?
+$0
+?cc .
+.}
+.ed
+.\"
+.\" Author
+.\"
+.de author
+.nb _ab
+.if rc<=0
+.ob _ab
+.\"
+.wb _ab
+.{
+.ex mode-=32
+.cc ?
+$0
+?cc .
+.}
+.ed
+.\"
+.\" date
+.\"
+.de date
+.nb _db
+.if rc<=0
+.ob _db
+.\"
+.wb _db
+.{
+.ex mode-=32
+.cc ?
+$0
+?cc .
+.}
+.ed
+.\"
+.\"
+.\"
+.de maketitle
+.ex cc=pl-10
+.nb _tb
+.if rc>0
+.ex tl=rc
+.ex tl=0
+.nb _ab
+.if rc>0
+.ex al=rc
+.ex al=0
+.nb _db
+.if rc>0
+.{
+.ex dl=rc
+.ex df=1
+.}
+.{
+.ex dl=1
+.ex df=0
+.}
+.if CHAPSIMPLE
+.{
+.ex t=4
+.ex b=2
+.ex c1=1
+.ex c2=1
+.}
+.{
+.ex t=cc/4-tl/2
+.ex b=cc/4-dl/2
+.ex c1=(cc-t-b-tl-al-dl)/2
+.ex c2=cc-t-b-c1-tl-al-dl
+.}
+.if t>0 && b>0 && c1>0 && c2>0
+.{
+.ce 999
+.sp t
+.if tl>0
+.{
+.ub _tb
+.cb _tb
+.}
+.\"
+.sp c1
+.if al>0
+.{
+.ub _ab
+.cb _ab
+.}
+.\"
+.sp c2
+.if df
+.{
+.ub _db
+.cb _db
+.}
+.{
+.if LANGUAGE==JAPANESE
+.dy 3
+.dy 1
+.}
+.ce 0
+.if CHAPSIMPLE
+.sp b
+.bp 1
+.}
+.{
+.wm Page length is too short.
+.qu
+.}
+.ed
+.\"
+.\"
+.\"
+.de appendix
+.ex APPENDIX=1
+.ex chapter=0
+.ed
+.\"
+.\" 章
+.\"
+.de chapter
+.ex section=0
+.ex subsection=0
+.br
+.if CHAPTOP>_sp
+.ex cc=CHAPTOP-_sp
+.ex cc=0
+.es .ne %(cc+1+(SECTOP+1)*2+SECBOTTOM+1)
+.spl CHAPTOP
+.(t
+.if CHAPCENTER
+.ce
+.ti CHAPINDENT
+.if APPENDIX
+.{
+.if LANGUAGE==JAPANESE
+.es 追記 %A(chapter+=1)  $0
+.es Appendix %A(chapter+=1)  $0
+.}
+.{
+.if CHAPSIMPLE
+.es %(chapter+=1).  $0
+.   {
+.   if LANGUAGE==JAPANESE
+.   es 第%(chapter+=1)章  $0
+.   es Chapter %(chapter+=1)  $0
+.   }
+.}
+.)t
+.br
+.spl CHAPBOTTOM
+.ex chapcl=cl
+.ex chappn=pn
+.ed
+.\"
+.\" 項
+.\"
+.de section
+.ex subsection=0
+.br
+.if SECTOP>_sp
+.ex cc=SECTOP-_sp
+.ex cc=0
+.es .ne %(cc+SECTOP+2+SECBOTTOM+1)
+.spl SECTOP
+.ob _title
+.wb _title
+.{
+.(t
+.if APPENDIX
+.es %s (INDENT_CONTENTS)%A(chapter).%(section+=1)  $0
+.es %s (INDENT_CONTENTS)%(chapter).%(section+=1)  $0
+.)t
+.}
+.cb _title
+.ti CHAPINDENT+SECINDENT
+.if APPENDIX
+.es %A(chapter).%(section)  $0
+.es %(chapter).%(section)  $0
+.spl SECBOTTOM
+.ex chapcl=cl
+.ex chappn=pn
+.ed
+.\"
+.\" 小項
+.\"
+.de subsection
+.br
+.if SECTOP>_sp
+.ex cc=SECTOP-_sp
+.ex cc=0
+.es .ne %(cc+SECBOTTOM+3)
+.spl SECTOP
+.ob _title
+.wb _title
+.{
+.(t
+.if APPENDIX
+.es %s (INDENT_CONTENTS*2)%A(chapter).%(section).%(subsection+=1)  $0
+.es %s (INDENT_CONTENTS*2)%(chapter).%(section).%(subsection+=1)  $0
+.)t
+.}
+.cb _title
+.ti CHAPINDENT+SECINDENT*2
+.if APPENDIX
+.es %A(chapter).%(section).%(subsection)  $0
+.es %(chapter).%(section).%(subsection)  $0
+.spl SECBOTTOM
+.ed
+.\"
+.\" 小見出し
+.\"
+.de SH
+.es .ne %(SECTOP+SECBOTTOM+3)
+.spl SECTOP
+.ti CHAPINDENT+SECINDENT*2
+.cc ?
+$0
+?cc .
+.spl SECBOTTOM
+.ed
+.\"
+.\" 参考文献の登録
+.\"
+.de bib
+.if argc==0
+.{
+.wm label must be specified.
+.qu
+.}
+.\"
+.nb @bib
+.if rc>0
+.{
+.   wb @bib
+.   {
+.       nf
+.       si )cc .
+.       si .}
+.       si .IPend
+.       si .sp
+.   }
+.}
+.{
+.   ob @bib
+.}
+.ex bib_$1=(bibc+=1)
+.wb @bib
+.{
+.   nf
+.   if CODE==ASCII
+.   {
+.       if bibc<10
+.       es .si .IP \ [%(bibc)]
+.       es .si .IP [%(bibc)]
+.   }
+.   {
+.       if bibc<10
+.       es .si .IP \ <%(bibc)>
+.       es .si .IP <%(bibc)>
+.   }
+.   si .{
+.   si .cc )
+.}
+.wb @bib
+.ed
+.\"
+.\" 参考文献の参照
+.\"
+.de cite
+.if argc==0 || bib_$1==0
+.{
+.wm no such label '$1' was ever specified.
+.qu
+.}
+.\"
+.if CODE==ASCII
+.es [%(bib_$1)]
+.es <%(bib_$1)>
+.if argc>1
+.cite $2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12 $13 $14 $15 $16 $17
+.\"
+.ed
+.\"
+.\"
+.\"
+.de biblist
+.nb @bib
+.if rc>0
+.{
+.ce
+.if LANGUAGE==JAPANESE
+―参考文献―
+- Bibliography -
+.sp 2
+.wb @bib
+.{
+.   nf
+.   si )cc .
+.   si .}
+.   si .IPend
+.   br
+.}
+.ex _mode=mode
+.nf
+.br
+.ub @bib
+.br
+.ex mode=_mode
+.}
+.\" no bibliograph listed
+.ed
+.\"
+.\" 右下そろえ
+.\"
+.ex bright_macro=(macroc+=1)
+.de bright
+.ex _macro=bright_macro
+.ob _box
+.ex _mode=mode
+.nf
+.nj
+.wb _box
+.ed
+.\"
+.\"
+.\"
+.de brightend
+.macrocheck bright_macro
+.ex cc=_box
+.ob _box2
+.wb _box2
+.{
+.nf
+.ex mode-=32
+.ub cc
+.}
+.cb _box
+.if _mode & 8
+.ju
+.\"
+.ex mode=_mode
+.br
+.nb _box2
+.ex n=rc
+.leftline
+.if rc>=n+5
+.sp rc-n
+.{
+.bp
+.sp pl-10-n
+.}
+.ri n
+.ub _box2
+.cb _box2
+.ex _macro=0
+.ri 0
+.ed
+.\"
+.\" 目次
+.\"
+.de contents
+.ce
+.if LANGUAGE==JAPANESE
+―目次―
+- Contents -
+.sp 2
+.tp
+.ed
+.\"
+.\" 索引
+.\"
+.de index
+.ce
+.if LANGUAGE==JAPANESE
+―索引―
+- Index -
+.sp 2
+.ip
+.ed
+.\"
+.\" 文章に出力する語に索引を付ける
+.\"
+.de ref
+.ix $0
+.cc ?
+$0
+?cc .
+.ed
+.\"
+.\" 謝辞
+.\"
+.de thanks
+.ce
+.if LANGUAGE==JAPANESE
+―謝辞―
+- Acknowledgements -
+.sp 2
+.ed
+.\"
+.\" 箇条書のスタイル
+.\"
+.ex roman=1
+.ex alpha=2
+.ex upper=4
+.ex dot=8
+.ex rpare=16
+.ex pare=32
+.ex mark=64
+.ex dash=128
+.ex wide=256
+.\"
+.\" 箇条書きの項の間の空白行を変更する
+.\"
+.ex itemsp=1
+.de itemsp
+.if argc>0
+.ex itemsp=$1
+.ex itemsp=1
+.ed
+.\"
+.\" 箇条書
+.\"
+.ex item_macro=(macroc+=1)
+.de item
+.if argc>0
+.ex _itemstyle=$0
+.ex _itemstyle=dot
+.if _itemstyle & (mark|dash)
+.{
+.   if _itemstyle & mark
+.   ex _itemstyle=mark
+.   ex _itemstyle=dash
+.   ex _itemin=2
+.}
+.ex _itemin=2
+.if _itemstyle & roman
+.{
+.   ex _itemstyle = _itemstyle & (roman|dot|rpare|pare|upper|wide)
+.   if _itemstyle & wide
+.   ex _itemin=8
+.   ex _itemin=4
+.}
+.\"
+.if _itemstyle & alpha
+.ex _itemstyle = _itemstyle & (alpha|dot|rpare|pare|upper)
+.\"
+.if _itemstyle & pare
+.{
+.   ex _itemstyle = _itemstyle & (alpha|roman|pare|upper)
+.   ex _itemin+=2
+.}
+.\"
+.if _itemstyle & dot
+.{
+.   ex _itemstyle = _itemstyle & (alpha|roman|dot|upper)
+.   ex _itemin+=1
+.}
+.\"
+.if _itemstyle & rpare
+.ex _itemin+=1
+.\"
+.ex _macro=item_macro
+.in in
+.bspl BLOCKTOP
+.ex _itemc=1
+.ex _ll=ll
+.ob _item
+.ll _itemin
+.ex itemc=_itemc
+.ex itemstyle=_itemstyle
+.wb _item
+.{
+.ri
+.itemmark itemstyle itemc
+.}
+.ll _ll-_itemin-1-in
+.ob _item1
+.wb _item1
+.ed
+.\"
+.\" 箇条書の次の項
+.\"
+.de itemnr
+.macrocheck item_macro
+.jb _item _item1
+.ll _ll
+.should_bp _item
+.cj
+.rb _item
+.cj |
+.br
+.if itemsp
+.bspl itemsp
+.\"
+.ob _item
+.ll _itemin
+.ex _itemc+=1
+.ex itemc=_itemc
+.ex itemstyle=_itemstyle
+.wb _item
+.{
+.ri
+.itemmark itemstyle itemc
+.}
+.ll _ll-_itemin-1-in
+.ob _item1
+.wb _item1
+.ed
+.\"
+.\" 箇条書の終り
+.\"
+.de itemend
+.macrocheck item_macro
+.jb _item _item1
+.ll _ll
+.should_bp _item
+.cj
+.rb _item
+.cj |
+.cb _item
+.cb _item1
+.ex _macro=0
+.bspl BLOCKTOP
+.ex itemstyle=0
+.ex itemc=0
+.ed
+.\"
+.\"
+.\"
+.de itemmark
+.if $1 & mark
+o
+.{
+.   if $1 & dash
+-
+.   \"
+.}
+.if $1 & pare
+.ex _lp=1
+.ex _lp=0
+.if $1 & (rpare|pare)
+.ex _rp=1
+.ex _rp=0
+.if $1 & dot
+.ex _dot=1
+.ex _dot=0
+.if $1 & (roman|alpha|mark|dash)
+.\"
+.es %s((_lp)%($2)%s)(_rp)%s.(_dot)
+.if $1 & roman
+.{
+.   if $1 & upper
+.   es %s((_lp)%R($2)%s)(_rp)%s.(_dot)
+.   es %s((_lp)%r($2)%s)(_rp)%s.(_dot)
+.}
+.\"
+.if $1 & alpha
+.{
+.   if $1 & upper
+.   es %s((_lp)%A($2)%s)(_rp)%s.(_dot)
+.   es %s((_lp)%a($2)%s)(_rp)%s.(_dot)
+.}
+.\"
+.ed
+.\"
+.\"
+.\"
+.de label
+.if argc>0
+.{
+. if itemc && itemstyle
+. {
+.  ex itemn_$1=itemc
+.  ex items_$1=itemstyle
+. }
+. {
+.  ex appn_$1=APPENDIX
+.  ex chap_$1=chapter
+.  ex sec_$1=section
+.  ex subsec_$1=subsection
+.  ex pn_$1=pn
+. }
+.}
+.wm Name must be specified.
+.ed
+.\"
+.\"
+.\"
+.de labelref
+.if argc>0
+.{
+. if itemn_$1
+. itemmark items_$1 itemn_$1
+. {
+.  if sec_$1==0 && subsec_$1==0
+.  es .es \%%sA(appn_$1==1)(chap_$1)
+.  \"
+.  if sec_$1 && subsec_$1==0
+.  es .es .si \%%sA(appn_$1==1)(chap_$1).%(sec_$1)
+.  \"
+.  if sec_$1 && subsec_$1
+.  es .es .si \%%sA(appn_$1==1)(chap_$1).%(sec_$1).%(subsec_$1)
+.  \"
+. }
+.}
+.wm Name must be specified.
+.ed
+.\"
+.\"
+.\"
+.de pageref
+.if argc
+.es %(pn_$1)
+.wm Name must be specified.
+.ed
+.\"
+.\" ローマ数字箇条書
+.\"
+.de ritem
+.item roman|dot
+.ed
+.\"
+.\" ローマ数字箇条書の次の項
+.\"
+.de ritemnr
+.itemnr
+.ed
+.\"
+.\" ローマ数字箇条書の終り
+.\"
+.de ritemend
+.itemend
+.ed
+.\"
+.\" 英数字箇条書
+.\"
+.de aitem
+.item alpha|rpare
+.ed
+.\"
+.\" 英数字箇条書の次の項
+.\"
+.de aitemnr
+.itemnr
+.ed
+.\"
+.\" 英数字箇条書の終り
+.\"
+.de aitemend
+.itemend
+.ed
+.\"
+.\" mark
+.\"
+.de mark
+.item mark
+.ed
+.\"
+.\" next mark
+.\"
+.de marknr
+.itemnr
+.ed
+.\"
+.\" end of mark
+.\"
+.de markend
+.itemend
+.ed
+.\"
+.\" reference with line number
+.\"
+.ex nrefer_macro=(macroc+=1)
+.de nrefer
+.ex _macro=nrefer_macro
+.in in
+.ob _box1
+.ex _ll=ll
+.ll _ll-5-in
+.if argc
+.{
+.wb _box1
+.   {
+.      cc ?
+$0
+?      sp
+?      cc .
+.   }
+.}
+.\" no arguments
+.nb _box1
+.ex _nrefer_cc=rc
+.wb _box1
+.ed
+.\"
+.\" end of reference with line number
+.\"
+.de nreferend
+.macrocheck nrefer_macro
+.ll _ll
+.should_bp _box1
+.nb _box1
+.ex c = rc - _nrefer_cc
+.ex cc = _nrefer_cc
+.ll 4
+.ob _box
+.wb _box
+.{
+.if cc
+.sp cc
+.\" no description
+.ex cc=0
+.wl (cc+=1)<=c
+.    {
+.ri
+.es %(cc)
+.br
+.    }
+.}
+.jb _box _box1
+.ll _ll
+.cj
+.bspl BLOCKTOP
+.rb _box
+.bspl BLOCKTOP
+.cj |
+.cb _box
+.cb _box1
+.ex _macro=0
+.ed
+.\"
+.\" reference with '>'
+.\"
+.ex refer_macro=(macroc+=1)
+.de refer
+.ex _macro=refer_macro
+.in in
+.ob _box1
+.ex _ll=ll
+.ll _ll-1-in
+.wb _box1
+.ed
+.\"
+.\" end of reference with '>'
+.\"
+.de referend
+.macrocheck refer_macro
+.ll _ll
+.should_bp _box1
+.ob _box
+.jb _box _box1
+.cj >
+.bspl BLOCKTOP
+.rb _box
+.bspl BLOCKTOP
+.cj |
+.cb _box
+.cb _box1
+.ex _macro=0
+.ed
+.\"
+.\" 引用
+.\"
+.ex quote_macro=(macroc+=1)
+.de quote
+.ex _macro=quote_macro
+.in in
+.ex _ll=ll
+.ob _box
+.ll ll-in-10
+.wb _box
+.ed
+.\"
+.\"
+.\"
+.de quoteend
+.macrocheck quote_macro
+.ll _ll
+.should_bp _box
+.bspl BLOCKTOP
+.ex _mode=mode
+.nf
+.in +5
+.ub _box
+.bspl BLOCKTOP
+.cb _box
+.in -5
+.ex mode=_mode
+.ex _macro=0
+.ed
+.\"
+.\" 段落
+.\"
+.de p
+.br
+.bspl PARATOP
+.if argc
+.es %s (PARAIN)$0
+.ti +PARAIN
+.ed
+.\"
+.\"
+.\"
+.de IP
+.if argc>1
+.ex _IPin=0$2
+.ex _IPin=4
+.ex _ll=ll
+.ob _ip
+.ll _IPin
+.wb _ip
+$1
+.ob _ip1
+.ll _ll-in-_IPin-1
+.wb _ip1
+.ed
+.\"
+.\"
+.\"
+.de IPend
+.jb _ip _ip1
+.cb _ip1
+.ll _ll
+.ub _ip
+.ob _ip
+.br
+.ed
+.\"
+.\" 注釈を保存する
+.\"
+.ex noted=0
+.de note
+.nb @note
+.if rc>0
+.{
+. if noted
+. {
+.  wb @note
+.  {
+.   ex attr=0
+.   nf
+.   si )cc .
+.   si .}
+.   si .IPend
+.  }
+. }
+. \"
+. ex it=cl+1
+.}
+.{
+. ex it=cl+1
+. ob @note
+.}
+.if (gmode & 2) && !(attrmask & superscr)
+.es %t(superscr|attr)*%(note+=1)%t(attr&~superscr)
+.{
+.if CODE==ASCII
+.es [*%(note+=1)]
+.es <*%(note+=1)>
+.}
+.wb @note
+.{
+. ex attr=0
+. nf
+. si .sp
+.if (gmode & 2) && !(attrmask & superscr)
+. es .si .IP *%(note) 3
+. {
+.  if CODE==ASCII
+.  {
+.   if note>9
+.   es .si .IP [*%(note)] 5
+.   es .si .IP \ [*%(note)] 5
+.  }
+.  {
+.   if note>9
+.   es .si .IP <*%(note)> 5
+.   es .si .IP \ <*%(note)> 5
+.  }
+. }
+. si .{
+. si .cc )
+.}
+.ex noted=1
+.wb @note (mode&~56)|1
+.ed
+.\"
+.\" 頁に余裕が有れば注釈を吐き出す
+.\"
+.de it
+.nb @note
+.if rc>0
+.{
+. in 0
+. if noted
+. {
+.  wb @note
+.  {
+.   ex attr=0
+.   nf
+.   si )cc .
+.   si .}
+.   si .IPend
+.  }
+.  ex noted=0
+. }
+. \"
+. ob @noteout
+. wb @noteout
+. {
+.  ex attr=0
+.  ex noteomo=mode
+.  fi
+.  ju
+.  br
+.  if gmode & 2
+.  es %t(rule)bb%t(0) note %t(rule)%sb(ll/3-8)%t(0)
+.  es -- note %s-(ll/3-8)
+.  br
+.  ub @note
+.  ex mode=noteomo
+. }
+. nb @noteout
+. ex ss=pl-cl-5-rc
+. if ss==0
+. {
+.  ex it=0
+.  rb @noteout
+.  cb @note
+.  br
+. }
+. ex it=pl-5-rc
+. cb @noteout
+.}
+.\" そもそも脚注が無い
+.ed
+.\"
+.\" 強制的に注釈を吐き出す
+.\"
+.de flushnote
+.in in
+.nb @note
+.if rc>0
+.{
+. ex oin=in
+. in 0
+. ex it=0
+. if noted
+. {
+.  wb @note
+.  {
+.   ex attr=0
+.   nf
+.   si )cc .
+.   si .}
+.   si .IPend
+.  }
+.  ex noted=0
+. }
+. \"
+. ob @noteout
+. wb @noteout
+. {
+.  ex attr=0
+.  ex noteomo=mode
+.  fi
+.  ju
+.  ub @note
+.  ex mode=noteomo
+. }
+. if tx
+. {
+.  sp 1
+note:
+. }
+. {
+.  nb @noteout
+.  ex ss=pl-cl-6-rc
+.  if ss>0
+.  sp ss
+.  {
+.   bp
+.   ex ss=pl-11-rc
+.   if ss>0
+.   sp ss
+.   \" 1ページにはおさまらない
+.  }
+.  br
+.  if gmode & 2
+.  es %t(rule)bb%t(0) note %t(rule)%sb(ll/3-8)%t(0)
+.  es -- note %s-(ll/3-8)
+.  br
+. }
+. ub @noteout
+. cb @note
+. cb @noteout
+. bp
+. in oin
+.}
+.\" 脚注が無い
+.ed
+.\"
+.\" 脚注処理中の.ne
+.\"脚注バッファが空でなければ、残り行数から引いて計算する
+.de ne
+.leftline
+.if rc>=0$1
+.\"
+.bp
+.ed
+.\"
+.\" 脚注の行数を計算に入れた残り行数
+.\"
+.de leftline
+.in in
+.if cl
+.ex _cl=cl
+.ex _cl=5
+.nb @note
+.if rc>0
+.{
+. ex oin=in
+. in 0
+. if noted
+. {
+.  wb @note
+.  {
+.   ex attr=0
+.   nf
+.   si )cc .
+.   si .}
+.   si .IPend
+.  }
+.  ex noted=0
+. }
+. \"
+. ob @noteout
+. wb @noteout
+. {
+.  ex attr=0
+.  ub @note
+. }
+. nb @noteout
+. ex rc+=1
+. in oin
+. if pl-5-_cl>=rc
+. ex rc=pl-5-rc-_cl
+. ex rc=pl-5-_cl
+.}
+.ex rc=pl-5-_cl
+.ed
+.\"
+.\" box macro for ntf
+.\"
+.ex box_macro=(macroc+=1)
+.de box
+.if argc<1
+.{
+.wm specify box name and column length.
+.qu
+.}
+.\"
+.in in
+.ex _macro=box_macro
+.ex _cc=1
+.ex _oll=ll
+.if 0$1
+.ex _cc=1
+.ex _cc=0
+.es .ex _ll%(_cc)=0$1
+.es .ex _ll%(_cc+=1)=0$2
+.es .ex _ll%(_cc+=1)=0$3
+.es .ex _ll%(_cc+=1)=0$4
+.es .ex _ll%(_cc+=1)=0$5
+.es .ex _ll%(_cc+=1)=0$6
+.es .ex _ll%(_cc+=1)=0$7
+.es .ex _ll%(_cc+=1)=0$8
+.es .ex _ll%(_cc+=1)=0$9
+.es .ex _ll%(_cc+=1)=0$10
+.es .ex _ll%(_cc+=1)=0$11
+.es .ex _ll%(_cc+=1)=0$12
+.es .ex _ll%(_cc+=1)=0$13
+.es .ex _ll%(_cc+=1)=0$14
+.es .ex _ll%(_cc+=1)=0$15
+.es .ex _ll%(_cc+=1)=0$16
+.es .ex _ll%(_cc+=1)=0$17
+.es .ex _ll%(_cc+=1)=0$18
+.es .ex _ll%(_cc+=1)=0$19
+.ex _cc=1
+.ex cc=0
+.if 0$1
+.ex _mc=argc
+.ex _mc=argc-1
+.ex _ll=1
+.wl (cc+=1)<=_mc
+.    es .ex _ll+=(_ll%(cc)+1)
+.ll _ll1
+.if gmode & 2
+.\"
+.{
+. ob _box
+. wb _box
+. hl
+. ex ccc=1
+. wl (ccc+=1)<=_mc
+. {
+.  es .ll _ll%(ccc)
+.  ob _box1
+.  wb _box1
+.  hl
+.  jb _box _box1
+. }
+.ll _ll-2
+.cj +
+.ex cc=_box
+.ob _box1
+.wb _box1
+.rb cc
+.cj |
+.cb _box
+.ob _boxhl
+.jb _boxhl _box1
+.ob _box1
+.jb _boxhl _box1
+.}
+.\"
+.\"
+.if _align
+.ex _ll-=2
+.{
+.   ll _oll
+.   if gmode & 2
+.   boxrule c d e 192
+.   es +%s-(_ll-2)+
+.   br
+.   ob _box
+.}
+.ob _box1
+.es .ll _ll%(_cc)
+.wb _box1
+.ed
+.\"
+.\" box next column
+.\"
+.de boxnc
+.macrocheck box_macro
+.nb _box
+.if rc>=0 || !_align
+.jb _box _box1
+.movebuff _box _box1
+.ob _box1
+.ex _cc=_cc+1
+.es .if _ll%(_cc)<=0
+.{
+.   ll _oll
+.   if _align
+.   {
+.       ex omo=mode
+.       nf
+.       cj
+.       rb _box
+.       cj |
+.       sp
+.       ex mode=omo
+.       cb _box
+.   }
+.   {
+.       jb _box _box1
+.       if gmode & 2
+.       cj a
+.       cj |
+.       rb _box
+.       if gmode & 2
+.       boxrule f g h 192
+.       rb _boxhl
+.       cj |
+.       ob _box
+.   }
+.   ex _cc=1
+.}
+.\"
+.es .ll _ll%(_cc)
+.wb _box1
+.ed
+.\"
+.\" box next row
+.\"
+.de boxnr
+.macrocheck box_macro
+.nb _box
+.if rc>=0 || !_align
+.jb _box _box1
+.movebuff _box _box1
+.ob _box1
+.ex _cc+=1
+.wl _cc<=_mc
+.{
+.   es .if _ll%(_cc)>0
+.   {
+.        es .ll _ll%(_cc)
+.        wb _box1
+.        sp
+.        jb _box _box1
+.        ob _box1
+.   }
+.   \"
+.   ex _cc+=1
+.}
+.ll _oll
+.if _align
+.{
+.   ex omo=mode
+.   nf
+.   cj
+.   rb _box
+.   cj |
+.   sp
+.   ex mode=omo
+.}
+.{
+.   jb _box _box1
+.   if gmode & 2
+.   cj a
+.   cj |
+.   rb _box
+.   if gmode & 2
+.   boxrule f g h 192
+.   rb _boxhl
+.   cj |
+.}
+.if _align
+.cb _box
+.ob _box
+.ex _cc=1
+.es .ll _ll%(_cc)
+.wb _box1
+.ed
+.\"
+.\" box end
+.\"
+.de boxend
+.macrocheck box_macro
+.nb _box
+.if rc>=0 || !_align
+.jb _box _box1
+.movebuff _box _box1
+.ob _box1
+.ex _cc+=1
+.wl _cc<=_mc
+.{
+.   es .if _ll%(_cc)>0
+.   {
+.        es .ll _ll%(_cc)
+.        wb _box1
+.        sp
+.        jb _box _box1
+.        ob _box1
+.   }
+.   \"
+.   ex _cc+=1
+.}
+.ll _oll
+.if _align
+.{
+.   cj
+.   rb _box
+.   cj |
+.   br
+.}
+.{
+.   jb _box _box1
+.   if gmode & 2
+.   cj a
+.   cj |
+.   rb _box
+.   cj |
+.   br
+.   if gmode & 2
+.   boxrule i j k 64
+.   es +%s-(_ll-2)+
+.}
+.cb _box
+.cb _box1
+.cb _boxhl
+.ex _ll=0
+.ex _cc=1
+.wl _cc<=_mc
+.{
+.   es .ex _ll%(_cc)=0
+.   ex _cc+=1
+.}
+.ex _cc=0
+.ex _mc=0
+.ll _oll
+.ex _oll=0
+.ex _align=0
+.ex _macro=0
+.ed
+.\"
+.\" copy buffer
+.\"
+.de movebuff
+.ex $1=$2
+.ex $2=0
+.ed
+.\"
+.\" rule on box
+.\"
+.de boxrule
+.br
+.ex cc=0
+.wl (cc+=1)<=_mc
+.es .ex l%(cc)=_ll%(cc)
+.ex mc=_mc
+.ob _br
+.wb _br
+.{
+. ex mode = mode & ~32
+. es %t($4)$1%t(64)%sb(l1)%t(0)
+. ex cc=1
+. wl (cc+=1)<=mc
+. es .es \%t($4)$2\%t(64)\%sb(l%(cc))\%t(0)
+. es %t($4)$3%t(0)
+.}
+.ub _br
+.cb _br
+.br
+.ed
+.\"
+.\" set alignment mode
+.\"
+.de align
+.ex _align=1
+.ed
+.\"
+.\" Error trap
+.\"
+.de macrocheck
+.if _macro!=$1 || !_macro
+.{
+.wm Macro does not active.
+.qu
+.}
+.\"
+.ed
+.\"
+.\"
+.\"
+.\"
+.\" table macro
+.\"
+.ex tbl_l=1
+.ex tbl_r=2
+.ex tbl_c=3
+.de tablearg
+.if argc>=2
+.{
+. ex cc+=1
+. es .ex _tw%(cc)=$1
+. es .ex _ts%(cc)=tbl_$2
+. tablearg $3 $4 $5 $6 $7 $8 $9 $10 $11 $12 $13 $14 $15 $16 $17 $18
+.}
+.\"
+.ed
+.\"
+.de table
+.ex cc=0
+.tablearg $0
+.ex _tbl_n=cc
+.ex _tbl_t=1
+.ex _tblc=1
+.ed
+.\"
+.de row
+.if _tbl_t
+.{
+. ex n=_tbl_n
+. ex cc=0
+. wl (cc+=1)<=n
+. es .ex w%(cc)=_tw%(cc)
+. ob _t
+. wb _t
+. {
+.  fi
+.  si .box
+.  ex cc=0
+.  wl (cc+=1)<=n
+.  es .es \%(w%(cc))
+.  br
+.  si .\"
+. }
+. ub _t
+. ob _t
+. ex _tbl_t=0
+.}
+.{
+. nb _box1
+. if rc==0
+. {
+.  wb _box1
+.  sp
+. }
+. \"
+. boxnr
+. \"
+.}
+.ex _tblc=1
+.if _tbl_n>=_tblc && _tblc<=argc
+.col $1
+.\"
+.if _tbl_n>=_tblc && _tblc<=argc
+.col $2
+.\"
+.if _tbl_n>=_tblc && _tblc<=argc
+.col $3
+.\"
+.if _tbl_n>=_tblc && _tblc<=argc
+.col $4
+.\"
+.if _tbl_n>=_tblc && _tblc<=argc
+.col $5
+.\"
+.if _tbl_n>=_tblc && _tblc<=argc
+.col $6
+.\"
+.if _tbl_n>=_tblc && _tblc<=argc
+.col $7
+.\"
+.if _tbl_n>=_tblc && _tblc<=argc
+.col $8
+.\"
+.if _tbl_n>=_tblc && _tblc<=argc
+.col $9
+.\"
+.ed
+.\"
+.de tableend
+.nb _box1
+.if rc==0
+.{
+. wb _box1
+. sp
+.}
+.\"
+.boxend
+.ed
+.\"
+.\"
+.de col_
+.if _tbl_t
+.{
+.ex table_s=s
+.row
+.ex s=table_s
+.}
+.\"
+.es .ex w=_tw%(_tblc)
+.wb _box1
+.{
+.ll w
+.if s==tbl_r
+.ri 999
+.\"
+.if s==tbl_c
+.ce 999
+.\"
+.ob _tbltb
+.wb _tbltb (mode&~56)|1
+$0
+.ub _tbltb
+.cb _tbltb
+.}
+.if _tbl_n==_tblc
+.\"
+.{
+.boxnc
+.\"
+.}
+.ex _tblc+=1
+.ed
+.\"
+.\"
+.de col
+.if _tbl_n>=_tblc
+.{
+.es .ex s=_ts%(_tblc)
+.col_ $0
+.}
+.\"
+.ed
+.\"
+.de coll
+.if _tbl_n>=_tblc
+.{
+.ex s=tbl_l
+.col_ $0
+.}
+.\"
+.ed
+.\"
+.de colc
+.if _tbl_n>=_tblc
+.{
+.ex s=tbl_c
+.col_ $0
+.}
+.\"
+.ed
+.\"
+.de colr
+.if _tbl_n>=_tblc
+.{
+.ex s=tbl_r
+.col_ $0
+.}
+.\"
+.ed
+.\"
+.\"
+.\"
+.de breakbar
+.in in
+.ne 3
+.spl 1
+.ex cc=((ll-in)/3-3)/2
+.ce
+.if gmode & 2
+.es %t(rule)%sb(cc)%t(0) + %t(rule)%sb(cc)%t(0)
+.es %s-(cc) + %s-(cc)
+.spl 1
+.br
+.ed
+.\"
+.\" Put at least n blank line.
+.\"
+.de spl
+.if argc>0
+.{
+.br
+.if ($0)>_sp
+.sp $0-_sp
+.\"
+.}
+.\"
+.ed
+.\"
+.\" Put at least n blank line or page break.
+.\"
+.de bspl
+.if argc>0
+.{
+.br
+.if ($0)>_sp && (cl>0 || mode&1)
+.sp $0-_sp
+.\"
+.}
+.\"
+.ed
+.\"
+.\"
+.\"
+.de should_bp
+.nb $1
+.ex _rc=rc
+.if cl>(pl-10)/3*2+5
+.es .ne %(_rc)
+.\"
+.ed
+.\"
+.\"
+.\"
+.de spbk
+.br
+.si " "
+.br
+.ed
+.\"
+.de screen
+.ex scr_oll=ll
+.ex scr_oin=in
+.ll 82
+.ne 26
+.box 80
+.so $0
+.boxend
+.ll scr_oll
+.in scr_oin
+.ed
+.\"
+.\" End of pri macro
+.\"
+.}
+.\"

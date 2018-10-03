@@ -1,0 +1,37 @@
+======================================================================
+   MFXDRV/DDN(XMML3.00)専用 mbj音色抜き出しツール
+                               sabst
+Copyright (C) 1995 ABA / T.Kobayashi and Interfair All Rights Reserved
+======================================================================
+
+※なんでしょう?
+	～.mbjファイルから音色を抜き出して～.sbj に書き出すツールです。
+
+※使い方
+	ppp.mbj から OPNの音色を抜き出して、OPNの音色データとして
+	ファイル ppp.sbj に書き出す場合、次のようにします。
+
+	>sabst ppp.mbj 0008 OPN
+
+	↑のファイルは、opnsound などで編集が可能です。
+
+※ソフトウェアについて
+	本ソフトウェアはフリーソフトウェアです。本ソフトウェアを用いたことに
+	よる事故などについて作者(小林 隆生)は一切責任を負わない物とします。
+	また、バグの修正の義務はないものとします。
+	本ソフトウェアの著作権は、小林 隆生及びInterfair Laboratoryに帰属しま
+	す。
+	営利および非営利目的の利用は自由にしてもらって構いません。
+	また、転載時の連絡も不要です。改造も自由です。改造後の転載も
+	構いません。ただしその旨はドキュメントなどに記載して下さい。
+
+※連絡先
+	ISL-NET:	isl30126	ABA@Interfair
+	E-Mail:		s95702@polaris.yatsushiro-nct.ac.jp
+
+※代理連絡先
+	NIFTY SERVE	HGA02466@niftyserve.or.jp	(TEANAN/山本 弘)
+
+Development Group "Interfair Laboratory" All Rights Reserved. ---------------
+
+

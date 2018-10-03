@@ -1,0 +1,72 @@
+# 
+# ssg.xdv makefile		DDNê—p ssgƒhƒ‰ƒCƒo[ ssg.xdv
+#
+# copyright (c) 1994 by ABA / Interfair all rights reserved.
+# 
+# makefile copyright (c) 1994 by ABA  all rights reserved.
+#
+!include	"..\sysdir.inc"
+
+#
+# project files 
+#
+objs =	ssgterm.obj	ssginit.obj	ssgfunc.obj	ssgsound.obj	\
+	ssgvol.obj
+exec	= ssg
+base	= ssg
+
+#
+# object and executable file be made.
+#
+.asm.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tasm /ml /m $<
+.c.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tcc -mc -c $<
+
+$(exec).xdv : $(base).obj $(tmp)$(exec).lib
+	@echo [42m -- Making $(exec)... -- [m
+	tlink /t /x $(base).obj ,$(exec).xdv ,,$(tmp)$(exec)
+	@copy $(exec).xdv $(junktest):
+	@echo [41m -- Complete -- [m
+#
+# library be made.
+#
+$(tmp)$(exec).lib : $(objs)
+	@echo [46m -- Making $(exec).lib public library -- [m
+	@del $(tmp)$(exec).lib
+	tlib $(tmp)$(exec).lib @object
+
+#
+# program object be made by.
+#
+ssg.obj		:	ssg.asm		..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					ssg.inc            \
+					ssgterm.inc        \
+					ssgfunc.inc        
+ssgterm.obj	:	ssgterm.asm	..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					ssg.inc            \
+					ssgterm.inc        \
+					ssgfunc.inc        
+ssginit.obj	:	ssginit.asm	..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					ssg.inc            \
+					ssgterm.inc        \
+					ssgfunc.inc        
+ssgfunc.obj	:	ssgfunc.asm	..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					ssg.inc            \
+					ssgterm.inc        \
+					ssgfreq.inc
+ssgsound.obj	:	ssgsound.asm	..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					ssg.inc            \
+					ssgterm.inc
+ssgvol.obj	:	ssgvol.asm	..\kernel\stdio.inc \
+					..\kernel\ddn.inc   \
+					ssg.inc            \
+					ssgterm.inc
+

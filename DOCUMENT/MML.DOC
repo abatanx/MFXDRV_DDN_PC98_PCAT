@@ -1,0 +1,798 @@
+
+
+mPlus(mfxc+) user's manualXMML3.00コマンド解説               ver.1.00DOC
+
+
+    ○MML列について
+ntf 2.1: mml.ntf(11)(0)<>
+invalid command:.note
+          MML列には、以下のコマンド大文字、小文字を区別しています。 が使
+        用可能です。
+
+
+    --------------------------------------------------------------------
+    【1】ノート(音符,休符)関係
+
+    書式:<音程>[音程修飾子] [音長][音長修飾子] [/[ゲートタイム比][/<ベロ
+    シティ]] [付加修飾子]
+    例1(付点4分音符でドレ#ミb):c4.d#4.e-4.
+    例2(ゲートタイム40% 60% 80%で、例1と同じ発声):c4./40d#4./60e-4./80
+    例3(ベロシティ90 100 110で、例1と同じ発声):c4.//90d#4.//100e-4.//110
+    例4(例2+例3):c4./40/90d#4./60/100e-4./80/110
+
+ntf 2.1: mml.ntf(34)(0)<>
+invalid command:.box 20 17 28
+
+ntf 2.1: mml.ntf(36)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(38)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(40)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(42)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(44)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(49)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(51)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(53)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(58)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(60)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(66)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(71)(0)<>
+invalid command:.note
+ntf 2.1: mml.ntf(75)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(77)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(79)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(84)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(86)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(88)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(93)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(95)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(97)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(102)(0)<>
+invalid command:.boxend
+    <音程>  c,d,e,f,g,a,b,r左から、  ドレミファソラシ,休符に対応していま
+    す。<音程修飾子> #,+,  -, *左からシャープ(半音上げる)、フラット(半音
+    下げる)、 ナチュラル(半音を戻す)に対応しています。なお、#と+は機能的
+    には全く同じものです。<音長> 1～64音長を設定します。 4分音符(休符)な
+    ら4、  付点8分音符(休符)なら8というふうに記述して下さい。  <音長修飾
+    子>  .付点を設定します。連続して記述できますが、あまり多く連続付点を
+    指定するとタイムベースが小さいとき、テンポずれが発生することがありま
+    す。この場合警告Warning  メッセージが表示されます。 <ｹﾞｰﾄﾀｲﾑ比>  1～
+    32767音長(ステップタイム)に対するゲートタイムの割合を設定します。 単
+    位は、%(パーセント)です。<ベロシティ>  1～127ベロシティ(鍵盤を叩く強
+    さ)を設定します。 1～127です。0は休符を示すので許可していません。<付
+    加修飾子> &,^次のノートとつなげます(tie)。次のノートが違う音程の場合
+    警告が表示されます。
+
+
+    --------------------------------------------------------------------
+    【2】和音関係
+
+    書式:"'"<MML列>"'"[音長][音長修飾子]
+
+    例(CMaj7):'cegb'4.
+
+      <MML列>内にあるノートを同時に発声します。なお、<MML列>内に存在する
+    ノートに付加された音長はゲートタイムに相当し、また、''外に付加された
+    音長などはステップタイムに相当しますので注意して下さい。
+
+
+    --------------------------------------------------------------------
+    【3】連符制御
+
+    書式:{[音長][音長修飾子]/<分割数><MML列>}
+
+    例(3連符:2分音符を3つに分けるという意味):{2/3cde}
+
+      [音長][音長修飾子]を<分割数>で割り、 その長さを<MML列>内にあるノー
+    トに振り分けます。 <MML列>内のノートに音長などが記述してあった場合無
+    視(警告を表示)されます。
+
+
+    --------------------------------------------------------------------
+    【4】繰り返し
+
+
+                                 - 1 -                           DIL1994
+
+
+
+
+mPlus(mfxc+) user's manualXMML3.00コマンド解説               ver.1.00DOC
+
+
+
+    書式:"["<数値><MML列>[":"]<MML列>"]"
+
+    例1(4回ドレミを繰り返す):[4cde]
+    例2(3回ドレミを繰り返して、最後はドレﾌｧ):[4cd:e]f
+    例3(4回ドレドレドレミ):[4[2cd]cde]
+
+      <数値>回数だけ [...] 内を繰り返します。<数値>が0の時は無限ループに
+    なります。なお、<MML列>内に ":" が存在した場合最後の1ループ時に、":"
+    以降のMMLをとばして繰り返しを抜けます。また、例3のような繰り返しのネ
+    ストも使用可能です。
+
+
+    --------------------------------------------------------------------
+    【5】調設定
+
+    書式:%<c|d|e|f|g|a|b>...%<#|+|->
+
+    例(Dmaj):%cf%+
+
+      %...% 内にある音程をデフォルトで #,+,-(シャープまたはフラット)に設
+    定します。この命令は1トラック毎に有効です。なお、 ノートで臨時的にこ
+    の効果を消したい場合は、ナチュラル "*" を使用して下さい。
+
+
+    --------------------------------------------------------------------
+    【6】定数的なマクロ展開
+
+    書式:(<マクロ名>)
+
+ntf 2.1: mml.ntf(184)(0)<>
+invalid command:.quote
+    例:
+    #define  Cmaj  %%+
+    #define  C7    (Cmaj)'cega+'
+         :
+    Melody t128l8o5(C7);
+    これは、
+    Melody t128l8o5%%+'cega+'
+ntf 2.1: mml.ntf(198)(0)<>
+invalid command:.quoteend
+    と展開される。
+      #def または #define で設定したマクロを展開します。再帰的なマクロも
+    正常に展開します。
+
+
+    --------------------------------------------------------------------
+    【7】定数的なマクロ展開(簡易表記)
+
+    書式:!<1文字>
+
+ntf 2.1: mml.ntf(213)(0)<>
+invalid command:.quote
+    例:
+    #define  Snaredrum  1
+    #define  s          @(Snaredrum)v15c
+         :
+    Melody t128l8o5!s4!s4!s4!s4;
+    これは、
+    Melody t128l8o5@1v15c4@1v15c4@1v15c4@1v15c4;
+ntf 2.1: mml.ntf(227)(0)<>
+invalid command:.quoteend
+    と展開される。
+      #def または #define で設定したマクロのマクロ名が1文字の場合、!コマ
+
+
+                                 - 2 -                           DIL1994
+
+
+
+
+mPlus(mfxc+) user's manualXMML3.00コマンド解説               ver.1.00DOC
+
+
+    ンドが使用できます。再帰的なマクロも正常に展開します。なお、このコマ
+    ンドでは次の手続き的マクロは使用できません。
+
+
+    --------------------------------------------------------------------
+    【8】Procedure的なマクロ展開
+
+    書式:(<マクロ名>(<パラメータ>,...))
+
+ntf 2.1: mml.ntf(243)(0)<>
+invalid command:.quote
+    例:
+    #define  Alpegio4(P1,P2,P3,P4)  P1P2P3P4>P1P2P3P4P3P2P1<P4P3P2P1<P4>
+         :
+    Melody t128l8o5(Alpegio4(c,e,g,a+));
+    これは、
+    Melody t128l8o5cega+>cega+gec<a+gec<a+>;
+ntf 2.1: mml.ntf(256)(0)<>
+invalid command:.quoteend
+    と展開される。
+      #def  または #define で設定した手続き的マクロを展開します。#define
+    でパラメータを例のように設定し、パラメータで展開後の構成を記述すると
+    このマクロが使用可能になります。なお、パラメータは盲目的に展開してい
+    くので、次のようなマクロの動作は保証できません。
+    例(だめな例です):
+ntf 2.1: mml.ntf(265)(0)<>
+invalid command:.quote
+    #define  test2(p,pp)  ppppppppp
+ntf 2.1: mml.ntf(271)(0)<>
+invalid command:.quoteend
+    Melody   (test2(c,dd));
+
+
+    --------------------------------------------------------------------
+    【
+    9
+    】エクスクルーシブメッセージ
+
+    書式:@exc[<10,16進数値及び計算式|sum>, .....];
+
+    例(GMシステムON):@exc[0x7e,0x7f,0x09,0x01];
+    例(計算式を用いた例):@exc[0x41,0x10,0x42,0x12,0x30+0x10,0x00,0x7f,
+    0x00,sum];
+
+      MIDI音源に対するエクスクルーシブメッセージを送信します。なお、デー
+    タには
+    10,16進数値及びそれを用いた計算式、  またはsumを設定することができま
+    す。
+    sumを設定した場合、その位置にチェックsumを計算し置き換わるように
+    なっています。
+ntf 2.1: mml.ntf(292)(0)<>
+invalid command:.quote
+      また、計算式には以下の演算子を用いることが出来ます。
+    2項演算子:
+     a+b  加算     a-b  減算     a*b 乗算    a/b 除算    a%b 剰余
+     a&b  論理積   a|b  論理和   a^b 排他的論理和
+     a>>b 右シフト a<<b 左シフト
+ntf 2.1: mml.ntf(302)(0)<>
+invalid command:.note
+    かっこかっこはマクロと区別するために () ではなく {} を使用してくださ
+    い。:
+ntf 2.1: mml.ntf(308)(0)<>
+invalid command:.quoteend
+     {    左かっこ }    右かっこ
+    以上の計算式及び手続き的マクロを使用することにより、強力なコントロー
+    ル
+    マクロを作成することが出来ます。
+ntf 2.1: mml.ntf(312)(0)<>
+invalid command:.quote
+    例(GS音源のリバーブ設定マクロ):
+    #define   GS_Reberb(Type)   @exc[0x41,0x10,0x42,0x12,0x40,0x01,0x30,
+    Type,sum]
+
+
+                                 - 3 -                           DIL1994
+
+
+
+
+mPlus(mfxc+) user's manualXMML3.00コマンド解説               ver.1.00DOC
+
+
+    #define  Reberb_HALL1     3
+         :
+    Melody t128l8o5(GS_Reberb((Reberb_HALL1)));
+    これは、
+    Melody t128l8o5@exc[0x41,0x10,0x42,0x12,0x40,0x01,0x30,3,sum];
+ntf 2.1: mml.ntf(326)(0)<>
+invalid command:.quoteend
+    と展開される。
+
+
+    --------------------------------------------------------------------
+    【10】ECM(Extend Contorol Message)制御
+
+    書式:@ecm[<DRVIDNUM>,<DRVTYPE>,<10,16進数値及び計算式|"""文字列
+    """>, .....];
+
+    例(歌詞を表示):@exc[0x0001,0x20,0x00,"ぎゃー!しね(笑)。"];
+
+      XMML3.00仕様の外部ドライバに対するメッセージを送信します。DRVIDNUM
+    及びDRVTYPEの数値については、 コントロールしたいドライバの説明書をお
+    読み下さい。 データには10,16進数数値、  文字列を使用することが出来ま
+    す。なお、文字列はそのままファイルに書き出されるのでバイナリコメント
+    などにも使用することが出来ます。文字列データを複数書く場合、区切りが
+    ありませんので注意して下さい。
+    例:@ecm[0x1000,0x20,"てすと1","てすと2"]
+    これは、ファイルには "てすと1てすと2" と書き出される。ASCIIZな区切り
+    を使用したいときは、
+    @ecm[0x1000,0x20,"てすと1",0,"てすと2",0]
+    という方法で書く必要があります。
+
+
+    --------------------------------------------------------------------
+    【11】音量制御
+
+ntf 2.1: mml.ntf(364)(0)<>
+invalid command:.box 20 17 28
+
+ntf 2.1: mml.ntf(366)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(368)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(370)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(372)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(374)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(379)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(381)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(383)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(385)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(387)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(389)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(394)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(396)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(398)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(400)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(402)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(404)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(406)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(408)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(410)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(412)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(414)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(416)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(421)(0)<>
+invalid command:.boxend
+    書式数値範囲説明v<数値> 0～15ボリュームを0(無音)～15(最大)の16段階で
+    設定します。最小の時@v0、最大の時@v120に相当します。v<<+|->数値> -15
+    ～+15現在のボリュームを-15～+15します。@v<数値> 0～127ボリュームを0(
+    無音)～127(最大)の128段階で設定します。vコマンドに比べ細かなボリュー
+    ムの指定が可能です。@v<<+|->数値> -127～+127現在のボリュームを-127～
+    +127します。 @e<数値> 0～127エクスプレッションを0(無音)～127(最大)の
+    128段階で設定します。@e<<+|->数値>  -127～+127現在のエクスプレッショ
+    ンを-127～+127します。 @mv<数値> 0～127マスターボリュームを0(無音)～
+    127(最大)の128段階で設定します。曲全体に有効です。トラック毎の設定は
+    できません。
+
+
+    --------------------------------------------------------------------
+    【12】オクターブ／音長／ゲートタイム／ヴェロシティー制御
+
+ntf 2.1: mml.ntf(431)(0)<>
+invalid command:.box 20 17 28
+
+ntf 2.1: mml.ntf(433)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(435)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(437)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(439)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(441)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(443)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(445)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(447)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(449)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(451)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(453)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(455)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(457)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(459)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(461)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(463)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(465)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(467)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(469)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(471)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(473)(0)<>
+invalid command:.boxend
+    書式数値範囲説明>なしオクターブを1上げます。<なしオクターブを1下げま
+    す。o<数値> 0～7オクターブを設定します。 l[音長][音長修飾子]ノート関
+    係を参照ノートで音長を省略した場合に使用するデフォルトを設定します。
+    q<ゲートタイム比> 1～32767ノートでゲートタイム比を省略した場合に使用
+    するデフォルトを設定します。x<ヴェロシティー> 1～127ノートでヴェロシ
+    ティー省略した場合に使用するデフォルトを設定します。
+
+
+    --------------------------------------------------------------------
+
+
+                                 - 4 -                           DIL1994
+
+
+
+
+mPlus(mfxc+) user's manualXMML3.00コマンド解説               ver.1.00DOC
+
+
+    【13】音色／音色バンク関係
+
+ntf 2.1: mml.ntf(483)(0)<>
+invalid command:.box 20 17 28
+
+ntf 2.1: mml.ntf(485)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(487)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(489)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(491)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(493)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(495)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(497)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(499)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(501)(0)<>
+invalid command:.boxend
+    書式数値範囲説明@<数値> 0～127音色を変更します。@b<10,16進数値> 0000
+    ～7f7f音色バンクを変更します。
+
+
+    --------------------------------------------------------------------
+    【14】エッフェクタ制御
+
+ntf 2.1: mml.ntf(511)(0)<>
+invalid command:.box 20 17 28
+
+ntf 2.1: mml.ntf(513)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(515)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(517)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(519)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(521)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(523)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(525)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(527)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(529)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(531)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(533)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(535)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(537)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(539)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(541)(0)<>
+invalid command:.boxend
+    書式数値範囲説明@fr<数値>   0～127リバーブセンドレベルを変更します。
+    @fr<<+|->数値>  -127～+127現在のリバーブセンドレベルを-127～+127しま
+    す。@fc<数値> 0～127リバーブセンドレベルを変更します。@fc<<+|->数値>
+    -127～+127現在のリバーブセンドレベルを-127～+127します。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                 - 5 -                           DIL1994
+
+
+
+
+mPlus(mfxc+) user's manualXMML3.00コマンド解説               ver.1.00DOC
+
+
+    --------------------------------------------------------------------
+    【15】パン制御
+
+ntf 2.1: mml.ntf(550)(0)<>
+invalid command:.box 20 17 28
+
+ntf 2.1: mml.ntf(552)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(554)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(556)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(558)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(560)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(562)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(564)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(566)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(568)(0)<>
+invalid command:.boxend
+    書式数値範囲説明@p<数値> 0～127パンの位置を設定します。64が中央、 0(
+    左)～127(右)です。 @p<<+|->数値>  -127～+127現在のパンの位置を-127～
+    +127します。
+
+
+    --------------------------------------------------------------------
+    【16】ビブラート／ポルタメント／ピッチベンド制御
+
+ntf 2.1: mml.ntf(578)(0)<>
+invalid command:.box 20 17 28
+
+ntf 2.1: mml.ntf(580)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(582)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(584)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(586)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(588)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(590)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(592)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(594)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(596)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(598)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(600)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(602)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(604)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(606)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(608)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(610)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(612)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(614)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(616)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(618)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(620)(0)<>
+invalid command:.boxend
+    書式数値範囲説明m<数値> 0～127ビブラートレベルを設定します。 m<<+|->
+    数値> -127～+127現在のビブラートレベルを-127～+127します。@xp<+|->な
+    しポルタメントをon(+)、off(-)します。@xpt<数値> 0～127ポルタメントタ
+    イムを設定します。 @xpc<数値> 0～127ポルタメントコントロールを設定し
+    ます。p<数値> -8192～8191ピッチベンドを設定します。
+
+
+    --------------------------------------------------------------------
+    【17】ペダル制御
+
+ntf 2.1: mml.ntf(630)(0)<>
+invalid command:.box 20 17 28
+
+ntf 2.1: mml.ntf(632)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(634)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(636)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(638)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(640)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(642)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(644)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(646)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(648)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(650)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(652)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(654)(0)<>
+invalid command:.boxend
+    書式数値範囲説明@xt<+|->なしソステヌートをon(+)、     off(-)します。
+    @xs<+|->なしソフトをon(+)、   off(-)します。  @xh<+|->なしホールドを
+    on(+)、off(-)します。
+
+
+    --------------------------------------------------------------------
+    【18】RPN,NRPN,データエントリー
+
+ntf 2.1: mml.ntf(664)(0)<>
+invalid command:.box 20 17 28
+
+ntf 2.1: mml.ntf(666)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(668)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(670)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(672)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(674)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(676)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(678)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(680)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(682)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(684)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(686)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(691)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(693)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(695)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(697)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(699)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(701)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(703)(0)<>
+invalid command:.boxend
+    書式数値範囲説明@nr<10,16進数値> 0x0000～0x7f7f NRPNアドレスを選択し
+    ます。  @rp<10,16進表記>   0x0000～0x7f7f  RPNアドレスを選択します。
+    @dt<10,16進表記> 0x0000～0x7f7fデータエントリー(16ビット)をmm,llの順
+    に設定します。効果は@dm,@dlを併用したもとと変わりありません。@dm<10,
+    16進表記>    0x00～0x7fデータエントリー(上位8ビット)mmを設定します。
+    @dl<10,16進表記> 0x00～0x7fデータエントリー(下位8ビット)llを設定しま
+    す。
+
+
+    --------------------------------------------------------------------
+    【19】その他の制御
+
+ntf 2.1: mml.ntf(713)(0)<>
+invalid command:.box 20 17 28
+
+ntf 2.1: mml.ntf(715)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(717)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(719)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(721)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(723)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(725)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(727)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(729)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(731)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(733)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(735)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(737)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(739)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(741)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(743)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(745)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(747)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(749)(0)<>
+invalid command:.boxnr
+ntf 2.1: mml.ntf(751)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(753)(0)<>
+invalid command:.boxnc
+ntf 2.1: mml.ntf(755)(0)<>
+invalid command:.boxend
+    書式数値範囲説明@xanなしオールノートオフを実行します。@xasなしオール
+    サウンドオフを実行します。 @xrなしリセットオールコントローラーを実行
+    します。 @xc<数値>  0～127トラックのチャンネルプレッシャーを設定しま
+    す。 @mn<数値>  0～16トラックのMONO数を設定します。@plなしトラックを
+    POLYに設定します。
+
+
+
+
+
+
+
+
+
+
+
+
+                                 - 6 -                           DIL1994
+
+

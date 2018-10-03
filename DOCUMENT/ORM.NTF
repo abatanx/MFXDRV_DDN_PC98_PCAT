@@ -1,0 +1,853 @@
+.\"
+.\" device ORiented Macro for ntf.
+.\"
+.\"    (c) Copyright 1990, 1991 Tomoyuki Niijima
+.\"    All rights reserved
+.\"
+.\" printers
+.ex POOR=0
+.ex NM9900=1
+.ex ESCP24J84=2
+.ex PCPR201=1|4
+.ex PCPR201H=1|8
+.ex IBM5553=8
+.ex IBM5575=12
+.ex ANSITERM=16
+.\"
+.\" specify one of them
+.\"
+.ex printer=NM9900
+.\"
+.\"
+.\" attributes
+.ex normal=0
+.ex uscore=1
+.ex high=2
+.ex wwide=4
+.ex tall=8
+.ex superscr=16
+.ex subscr=32
+.ex rule=64
+.ex vrule=128
+.ex shadow=256
+.ex italic=512
+.\"
+.\"
+.\" papers
+.ex A4=210
+.ex A4L=297
+.ex A4LL=210
+.ex A5=148
+.ex A5L=210
+.ex B4=257
+.ex B4L=364
+.ex B4LL=257
+.ex B5=182
+.ex B5L=257
+.ex B5LL=182
+.ex LETTER=216
+.ex LETTERL=279
+.ex LETTERLL=216
+.\"
+.\" option Line Per Inch
+.ex BUSY=6
+.ex CLEAR=5
+.ex VISIBLE=4
+.\"
+.ex LEFTMARGIN=25
+.ex RIGHTMARGIN=25
+.ex TOPMARGIN=50
+.ex CPI=12
+.ex LPI=BUSY
+.\"
+.\"
+.de printform
+.if argc<2
+.{
+.wm Specify paper name and a option (BUSY or CLEAR).
+.qu
+.}
+.\"
+.if !($1 && $1L)
+.{
+.wm Sorry, but I don't know $1 size of paper.
+.qu
+.}
+.\"
+.if printer
+.ex gmode=mode
+.ex attrmask= ~0
+.pl ($1L-TOPMARGIN)*$2*5/127
+.ll ($1-LEFTMARGIN-RIGHTMARGIN)*CPI*5/127
+.ex LPI=$2
+.if (mode & 2) && printer
+.es .initprinter %($2)
+.\"
+.ed
+.\"
+.if printer && (mode & 2)
+.{
+.de hl
+.if argc
+.ex cc=$0
+.ex cc=1
+.if cc<=0
+.ex cc=1
+.\"
+.ex oattr=attr
+.in in
+.at rule
+.wl (cc-=1)>=0
+.{
+.br
+.es %sb(ll-in)
+.}
+.at oattr
+.br
+.ed
+.}
+.\"
+.\"
+.if printer==NM9900 || printer==PCPR201 || printer==PCPR201H
+.{
+.if printer==PCPR201H
+.ex attrmask=0
+.ex attrmask=(superscr|subscr)
+.ex TOPMARGIN=30
+.ex RIGHTMARGIN=20
+.ex LEFTMARGIN=20
+.if printer==PCPR201H
+.ex CPI=12
+.ex CPI=13
+.de initprinter
+.es .cw \eT%(120/$1)
+.if printer==PCPR201H
+.cw \x1cC
+.\"
+.ed
+.\" initializing
+.ex outcode=1|2
+.\"
+.de attr
+.if mode & 2
+.{
+.if ($2|$3)&1
+.es .cw \e%sX($2&1)%sY($3&1)
+.\" underscore
+.if ($2|$3)&2
+.es .cw \e%s!(($2&2)==2)%s"(($3&2)==2)
+.\" highlight
+.if ($2|$3)&(4|8)
+.es .cw \ee%s2(($1&8)==8)%s1(($1&8)==0)%s2(($1&4)==4)%s1(($1&4)==0)
+.\" wwide and tall
+.if ($2)&(16|32)
+.{
+.es .cw \eE\es%s1(($2&16)==16)%s2(($2&16)==0)
+.ex outcode=0
+.}
+.\" superscr and subscr on
+.if ($3)&(16|32)
+.{
+.cw \es0\eK
+.ex outcode=3
+.}
+.\" superscr and subscr off
+.}
+.\"
+.ed
+.\"
+.\"
+.if printer==NM9900
+.{
+.de rulen
+.if rulen==5
+.ex rulen=6
+.ex rulen=5
+.ed
+.}
+.{
+.de rulen
+.if printer==PCPR201H
+.ex rulen=7
+.ex rulen=4
+.ed
+.}
+.\"
+.\"
+.de rule_a
+.rulen
+.cw \e\x06
+.cw \eU0002\xff\xff\xff
+.es .cw \e\x0%(rulen)
+.cw \eK
+.ed
+.\"
+.if printer==NM9900
+.{
+.de rule_b
+.rulen
+.if rulen==5
+.cw \eU0013\0\x18\0
+.cw \eU0014\0\x18\0
+.cw \eK
+.ed
+.}
+.{
+.de rule_b
+.if printer==PCPR201H
+.cw \eU0015\0\x18\0
+.cw \eU0012\0\x18\0
+.cw \eK
+.ed
+.}
+.\"
+.de rule_c
+.rulen
+.cw \e\x06
+.cw \eU0002\0\x78\xff
+.es .cw \eU000%(rulen)\0\x18\0
+.cw \eK
+.ed
+.\"
+.de rule_d
+.rulen
+.cw \eU0006\0\x18\0
+.cw \eU0002\0\x78\xff
+.es .cw \eU000%(rulen)\0\x18\0
+.cw \eK
+.ed
+.\"
+.de rule_e
+.rulen
+.cw \eU0006\0\x18\0
+.cw \eU0002\0\x78\xff
+.es .cw \e\x0%(rulen)
+.cw \eK
+.ed
+.\"
+.de rule_f
+.rulen
+.cw \e\x06
+.cw \eU0002\xff\xff\xff
+.es .cw \eU000%(rulen)\0\x18\0
+.cw \eK
+.ed
+.\"
+.de rule_g
+.rulen
+.cw \eU0006\0\x18\0
+.cw \eU0002\xff\xff\xff
+.es .cw \eU000%(rulen)\0\x18\0
+.cw \eK
+.ed
+.\"
+.de rule_h
+.rulen
+.cw \eU0006\0\x18\0
+.cw \eU0002\xff\xff\xff
+.es .cw \e\x0%(rulen)
+.cw \eK
+.ed
+.\"
+.de rule_i
+.rulen
+.cw \e\x06
+.cw \eU0002\xff\x1f\0
+.es .cw \eU000%(rulen)\0\x18\0
+.cw \eK
+.ed
+.\"
+.de rule_j
+.rulen
+.cw \eU0006\0\x18\0
+.cw \eU0002\xff\x1f\0
+.es .cw \eU000%(rulen)\0\x18\0
+.cw \eK
+.ed
+.\"
+.de rule_k
+.rulen
+.cw \eU0006\0\x18\0
+.cw \eU0002\xff\x1f\0
+.es .cw \e\x0%(rulen)
+.cw \eK
+.ed
+.\"
+.de rule_l
+.rulen
+.cw \eJ0012\0\xff\0\0\xff\0
+.cw \0\xff\0\0\x7e\0
+.cw \0\x7e\0\0\x7e\0
+.cw \0\x3c\0\0\x3c\0
+.cw \0\x3c\0\0\x18\0
+.cw \0\x18\0\0\x18\0
+.es .cw \e\x0%(rulen-4)
+.cw \eK
+.ed
+.\"
+.de rule_m
+.rulen
+.es .cw \e\x0%(rulen-4)
+.cw \eJ0012\0\x18\0\0\x18\0
+.cw \0\x18\0\0\x3c\0
+.cw \0\x3c\0\0\x3c\0
+.cw \0\x3c\0\0\x7e\0
+.cw \0\x7e\0\0\x7e\0
+.cw \0\xff\0\0\xff\0
+.cw \eK
+.ed
+.\"
+.de rule_n
+.rulen
+.cw \eU0003\0\0\0
+.cw \eJ0008\0\x20\0\0\x70\x01
+.cw \x00\x70\x0f\xff\xff\x7f
+.cw \xff\xff\x7f\0\x70\x0f
+.cw \0\x70\x01\0\x20\0
+.es .cw \e\x0%(rulen-3)
+.cw \eK
+.ed
+.\"
+.de rule_o
+.rulen
+.cw \eU0004\0\0\0
+.cw \eJ0008\0\x04\0\x40\x07\0
+.cw \x70\x07\0\x7e\xff\xff
+.cw \x7e\xff\xff\x70\x07\0
+.cw \x40\x07\0\0\x04\0
+.es .cw \e\x0%(rulen-4)
+.cw \eK
+.ed
+.\"
+.de rule
+.rulen
+.cw \0$1
+.ed
+.\"
+.de vrule
+.rulen
+.cw \e\x06
+.cw \eU0002\xff\xff\xff
+.es .cw \e\x0%(rulen)
+.cw \eK
+.ed
+.\"
+.de halflf
+.if $1==0
+.es .cw \eT%(120/LPI)
+.\" half lf reset
+.if $1==1
+.es .cw \eT%(60/LPI)
+.\" half lf set
+.if $1==2
+.es .cw \eT20
+.\" for tall line
+.ed
+.\"
+.ex fig_macro=(macroc+=1)
+.de fig
+.ex _macro=fig_macro
+.ob _fig
+.ex _mode=mode
+.nf
+.nj
+.wb _fig
+.ed
+.\"
+.de figend
+.macrocheck fig_macro
+.nb _fig
+.ex figl=rc
+.if gmode & 2
+.ex figc=rc*24*LPI/180+1
+.ex figc=rc
+.es .ne %(figc)
+.ex _attr=attr
+.at rule
+.if gmode & 2
+.cw \eT16
+.\"
+.ub _fig
+.at _attr
+.if _mode & 8
+.ju
+.\"
+.if _mode & 16
+.fi
+.\"
+.if gmode & 2
+.halflf 0
+.\"
+.ex cl+=(figl-figc)
+.cb _fig
+.ed
+.\"
+.de KI
+.cw \eK
+.ex rulen=0
+.ed
+.\"
+.de KO
+.ed
+.\"
+.de RESET
+.cw \x0c\ec1
+.ed
+.\"
+.}
+.\"
+.\"
+.\"
+.if printer==IBM5575 || printer==IBM5553
+.{
+.if printer==IBM5553
+.ex attrmask=(tall|subscr|superscr|uscore|high)
+.\"
+.ex LEFTMARGIN=20
+.ex RIGHTMARGIN=20
+.ex TOPMARGIN=45
+.ex CPI=12
+.de initprinter
+.if printer==IBM5575
+.cw \e\x7e\x02\0\x01\x3c
+.\"
+.halflf 0
+.ed
+.\"
+.de oc
+.ex _ocin=in
+.in 0
+.ex _ocl=28*2*LPI/15
+.es .ne %(_ocl+2)
+.hl
+.br
+.if gmode&2
+.{
+.cw \e%9\x00\x10
+.so $0
+.ex cl+=_ocl
+.halflf 0
+.}
+.{
+.sp 8
+.ce
+Office CAD Picture ($0) here
+.sp 8
+.}
+.hl
+.in _ocin
+.ed
+.\"
+.\"
+.de attr
+.if mode & 2
+.{
+.if ($2|$3)&1 && printer==IBM5575
+.es .cw \e\x7e\x11\0\x01\x0%s1($2&1)%s0($3&1)
+.\" underscore
+.if ($2|$3)&2 && printer==IBM5575
+.es .cw \e\x7e\x0e\0\x01\x1%s7(($2&2)==2)%s8(($3&2)==2)
+.\" highlight
+.if ($2|$3)&(4|8)
+.{
+.if printer==IBM5575
+. {
+. cw \e\x7e\x20\0\x03
+. es .cw \x%s2(($1&4)==4)%s1(($1&4)==0)0\x%s2(($1&8)==8)%s1(($1&8)==0)0\x02
+. }
+. {
+. if ($2|$3)&4
+. es .cw \e%s[(($1&4)==4)%s](($1&4)==0)
+. \"
+. }
+.}
+.\" wwide and tall
+.if ($2|$3)&16
+.es .cw \e\x7e\x0e\0\x01\x0%sd(($2&16)==16)%sf(($3&16)==16)
+.\" superscript
+.if ($2|$3)&32
+.es .cw \e\x7e\x0e\0\x01\x0%se(($2&32)==32)%sf(($3&32)==32)
+.\" subscript
+.}
+.\"
+.ed
+.\"
+.\"
+.de rule_a
+.cw \e%3\0\x08
+.cw \e%1\0\x02\xff\xff\xff\xff\xff\xff
+.cw \e%3\0\x05
+.ed
+.\"
+.de rule_b
+.cw \e%1\0\x0f
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.ed
+.\"
+.de rule_c
+.cw \e%3\0\x08
+.cw \e%1\0\x02\0\x1f\xff\0\x1f\xff
+.cw \e%1\0\x05\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.ed
+.\"
+.de rule_d
+.cw \e%1\0\x08\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.cw \0\x18\0\0\x18\0\0\x18\0
+.cw \e%1\0\x02\0\x1f\xff\0\x1f\xff
+.cw \e%1\0\x05\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.ed
+.\"
+.de rule_e
+.cw \e%1\0\x08\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.cw \0\x18\0\0\x18\0\0\x18\0
+.cw \e%1\0\x02\0\x1f\xff\0\x1f\xff
+.cw \e%3\0\x05
+.ed
+.\"
+.de rule_f
+.cw \e%3\0\x08
+.cw \e%1\0\x02\xff\xff\xff\xff\xff\xff
+.cw \e%1\0\x05\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.ed
+.\"
+.de rule_g
+.cw \e%1\0\x08\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.cw \0\x18\0\0\x18\0\0\x18\0
+.cw \e%1\0\x02\xff\xff\xff\xff\xff\xff
+.cw \e%1\0\x05\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.ed
+.\"
+.de rule_h
+.cw \e%1\0\x08\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.cw \0\x18\0\0\x18\0\0\x18\0
+.cw \e%1\0\x02\xff\xff\xff\xff\xff\xff
+.cw \e%3\0\x05
+.ed
+.\"
+.de rule_i
+.cw \e%3\0\x08
+.cw \e%1\0\x02\xff\x78\0\xff\x78\0
+.cw \e%1\0\x05\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.ed
+.\"
+.de rule_j
+.cw \e%1\0\x08\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.cw \0\x18\0\0\x18\0\0\x18\0
+.cw \e%1\0\x02\xff\x78\0\xff\x78\0
+.cw \e%1\0\x05\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.ed
+.\"
+.de rule_k
+.cw \e%1\0\x08\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.cw \0\x18\0\0\x18\0\0\x18\0
+.cw \e%1\0\x02\xff\x78\0\xff\x78\0
+.cw \e%3\0\x05
+.ed
+.\"
+.de rule
+.cw $1
+.ed
+.\"
+.de vrule
+.cw \e%1\0\x0f
+.cw \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0
+.cw \xff\xff\xff
+.cw \xff\xff\xff
+.cw \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0
+.ed
+.\"
+.de halflf
+.if $1==0
+.es .cw \e\x25\x39\x00\x%x(120/LPI)
+.\" half lf reset
+.if $1==1
+.{
+.if LPI==BUSY
+.es .cw \e\x25\x39\x00\x09
+.es .cw \e\x25\x39\x00\x%x(60/LPI)
+.}
+.\" half lf set
+.ed
+.\"
+.\"
+.de talllf
+.cw \e\x25\x35\0\x10
+.ed
+.\"
+.\"
+.de RESET
+.cw \e\x7e\x01\0\0
+.ed
+.\"
+.}
+.\"
+.\"
+.\"
+.if printer==ANSITERM
+.{
+.ex attrmask=(wwide|tall|superscr|subscr)
+.ex TOPMARGIN=20
+.ex CPI=12
+.\"
+.de initprinter
+.cw \e[m
+.ed
+.\"
+.de attr
+.if mode & 2
+.{
+.es .cw \e[m\e[%s4($1&1)
+.\" underscore
+.es .cw %s;(($1&2)==2)%s7(($1&2)==2)m
+.\" highlight
+.}
+.\"
+.ed
+.\"
+.\"
+.de rule
+.cw $1
+.ed
+.\"
+.}
+.\"
+.\"
+.\"
+.if printer==ESCP24J84
+.{
+.ex TOPMARGIN=20
+.ex CPI=12
+.de initprinter
+.cw \e@
+.halflf 0
+.cw \eM\x1cS\x03\x03\x1cU
+.ex cc=(LEFTMARGIN*10*CPI/254)
+.es .cw \el\x%x(cc)
+.ed
+.\" initializing jiscode
+.ex outcode=1
+.\" initializing sequence for printer
+.\"
+.de attr
+.if mode & 2
+.{
+.ex _attr=$1
+.if ($2|$3)&1
+.es .cw \x1c-\x0%s1($2&1)%s0($3&1)\e-\x0%s1($2&1)%s0($3&1)
+.\" underscore
+.if ($2|$3)&2
+.es .cw \e%sE(($2&2)==2)%sF(($3&2)==2)
+.\" highlight
+.if ($2|$3)&512
+.es .cw \e%s4(($2&512)==512)%s5(($3&512)==512)
+.\" italic
+.if ($2|$3)&256
+.es .cw \eq\x0%s2(($2&256)==256)%s0(($3&256)==256)
+.\" shadow
+.if ($2|$3)&60
+.{
+.if $1&60
+. {
+. if ($1&12)==12
+. cw \x1cW\x01\eW\x01\ew\x01
+. \" wwide tall
+. if ($1&12)==4
+. cw \x1cW\0\eW\x01\ew\0
+. \" wwide
+. if ($1&12)==8
+. cw \x1cW\x01\eW\0\ew\x01
+. \" tall
+. if ($2)&(16|32)
+.  {
+.  es .cw \x1cr\x0%s0(($1&16)==16)%s1(($2&16)==0)
+.  es .cw \eS\x0%s0(($2&16)==16)%s1(($2&16)==0)
+.  }
+.  cw \x1c\x12\eT
+. }
+. cw \x1cW\0\x1c\x12\eW\0\ew\0\eT
+.}
+.\"
+.}
+.\"
+.ed
+.\"
+.de rule_in
+.if kjmode
+.KO
+.\"
+.ed
+.\"
+.de rule_out
+.if kjmode
+.KI
+.\"
+.ed
+.\"
+.de rule_a
+.rule_in
+.cw \e\x5c\x08\0
+.cw \e*\x27\x02\0
+.cw \xff\xff\xff\xff\xff\xff
+.cw \e\x5c\x05\0
+.rule_out
+.ed
+.\"
+.de rule_b
+.rule_in
+.cw \e*\x27\x0f\0
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.rule_out
+.ed
+.\"
+.de rule_c
+.rule_in
+.cw \e\x5c\x08\0
+.cw \e*\x27\x02\0
+.cw \0\x1f\xff\0\x1f\xff
+.cw \e*\x27\x05\0
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.rule_out
+.ed
+.\"
+.de rule_d
+.rule_in
+.cw \e*\x27\x08\0
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.cw \e*\x27\x02\0
+.cw \0\x1f\xff\0\x1f\xff
+.cw \e*\x27\x05\0
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.rule_out
+.ed
+.\"
+.de rule_e
+.rule_in
+.cw \e*\x27\x08\0
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.cw \e*\x27\x02\0
+.cw \0\x1f\xff\0\x1f\xff
+.cw \e\x5c\x05\0
+.rule_out
+.ed
+.\"
+.de rule_f
+.rule_in
+.cw \e\x5c\x08\0
+.cw \e*\x27\x02\0
+.cw \xff\xff\xff\xff\xff\xff
+.cw \e*\x27\x05\0
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.rule_out
+.ed
+.\"
+.de rule_g
+.rule_in
+.cw \e*\x27\x08\0
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.cw \e*\x27\x02\0
+.cw \xff\xff\xff\xff\xff\xff
+.cw \e*\x27\x05\0
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.rule_out
+.ed
+.\"
+.de rule_h
+.rule_in
+.cw \e*\x27\x08\0
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.cw \e*\x27\x02\0
+.cw \xff\xff\xff\xff\xff\xff
+.cw \e\x5c\x05\0
+.rule_out
+.ed
+.\"
+.de rule_i
+.rule_in
+.cw \e\x5c\x08\0
+.cw \e*\x27\x02\0
+.cw \xff\x78\0\xff\x78\0
+.cw \e*\x27\x05\0
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.rule_out
+.ed
+.\"
+.de rule_j
+.rule_in
+.cw \e*\x27\x08\0
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.cw \e*\x27\x02\0
+.cw \xff\x78\0\xff\x78\0
+.cw \e*\x27\x05\0
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.rule_out
+.ed
+.\"
+.de rule_k
+.rule_in
+.cw \e*\x27\x08\0
+.cw \0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0\0\x18\0
+.cw \e*\x27\x02\0
+.cw \xff\x78\0\xff\x78\0
+.cw \e\x5c\x05\0
+.rule_out
+.ed
+.\"
+.de rule
+.if kjmode
+.KO
+.\"
+.cw $1
+.if kjmode
+.KI
+.\"
+.ed
+.\"
+.de vrule
+.if kjmode
+.KO
+.\"
+.cw \e*\x27\x0f\x00
+.cw \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0
+.cw \xff\xff\xff
+.cw \xff\xff\xff
+.cw \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0
+.if kjmode
+.KI
+.\"
+.ed
+.\"
+.de halflf
+.if $1==0
+.{
+.if LPI==VISIBLE
+.cw \e3\x2e
+.es .cw \e3\x%x(180/LPI)
+.}
+.\" half lf reset
+.if $1==1
+.{
+.if LPI==VISIBLE
+.cw \e3\x17
+.es .cw \e3\x%x(90/LPI)
+.}
+.\" half lf set
+.ed
+.\"
+.de KI
+.cw \x1c&
+.ed
+.\"
+.de KO
+.cw \x1c.
+.ed
+.\"
+.de RESET
+.cw \x0c\e@
+.ed
+.\"
+.}
+.\"
+.\"
+.\"

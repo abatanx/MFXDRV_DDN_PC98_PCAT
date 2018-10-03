@@ -1,0 +1,47 @@
+# 
+# pcm86.xdv makefile		DDNêÍóp pcm86ÉhÉâÉCÉoÅ[ pcm86.xdv
+#
+# copyright (c) 1994 by ABA / Interfair all rights reserved.
+# 
+# makefile copyright (c) 1994 by ABA  all rights reserved.
+#
+!include	"..\sysdir.inc"
+
+#
+# project files 
+#
+objs =	p86func.obj
+exec	= pcm86
+base	= pcm86
+
+#
+# object and executable file be made.
+#
+.asm.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tasm /ml $<
+.c.obj:
+	@echo [43m -- Compiling : $< -- [m
+	tcc -mc -c $<
+
+$(exec).xdv : $(base).obj $(tmp)$(exec).lib
+	@echo [42m -- Making $(exec)... -- [m
+	tlink /t /x $(base).obj ,$(exec).xdv ,,$(tmp)$(exec)
+	@copy $(exec).xdv $(junktest):
+	@echo [41m -- Complete -- [m
+#
+# library be made.
+#
+$(tmp)$(exec).lib : $(objs)
+	@echo [46m -- Making $(exec).lib public library -- [m
+	@del $(tmp)$(exec).lib
+	tlib $(tmp)$(exec).lib @object
+
+#
+# program object be made by.
+#
+pcm86.obj	:	pcm86.asm		pcm86.inc		\
+			..\kernel\stdio.inc	..\kernel\ddn.inc
+p86func.obj	:	p86func.asm		pcm86.inc		\
+			..\kernel\stdio.inc	..\kernel\ddn.inc
+
